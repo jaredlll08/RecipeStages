@@ -5,7 +5,7 @@ import net.darkhax.gamestages.capabilities.PlayerDataHandler;
 import net.minecraft.entity.player.*;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.*;
@@ -91,5 +91,22 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
         return recipe.getRemainingItems(inv);
     }
- 
+    
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        return recipe.getIngredients();
+    }
+    
+    public IRecipe getRecipe() {
+        return recipe;
+    }
+    
+    public String getTier() {
+        return tier;
+    }
+    
+    @Override
+    public String toString() {
+        return "RecipeStage{" + "tier='" + tier + '\'' + ", recipe=" + recipe + '}';
+    }
 }

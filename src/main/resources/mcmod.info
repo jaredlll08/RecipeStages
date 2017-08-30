@@ -2,19 +2,11 @@
   {
     "modid": "recipestages",
     "name": "RecipeStages",
-    "description": "",
+    "description": "Stages recpe",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "",
-    "updateUrl": "",
     "authorList": [
-      ""
-    ],
-    "credits": "",
-    "logoFile": "",
-    "screenshots": [],
-    "dependencies": [
-      ""
+      "Jared"
     ]
   }
 ]
