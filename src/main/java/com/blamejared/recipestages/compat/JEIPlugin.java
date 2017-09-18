@@ -22,7 +22,6 @@ public class JEIPlugin implements IModPlugin {
     @Override
     public void register(IModRegistry registry) {
         registry.handleRecipes(RecipeStage.class, new StagedRecipeFactory(), VanillaRecipeCategoryUid.CRAFTING);
-        registry.addRecipes(Recipes.recipes, VanillaRecipeCategoryUid.CRAFTING);
     }
     
     @Override
