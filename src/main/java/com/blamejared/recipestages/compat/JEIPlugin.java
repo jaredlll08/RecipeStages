@@ -16,21 +16,20 @@ public class JEIPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         IJeiHelpers helpers = registry.getJeiHelpers();
-        registry.addRecipeCategories(new StagedRecipeCategory(helpers.getGuiHelper()));
+//        registry.addRecipeCategories(new StagedRecipeCategory(helpers.getGuiHelper()));
     }
     
     @Override
     public void register(IModRegistry registry) {
-        registry.handleRecipes(RecipeStage.class, new StagedRecipeFactory(), "recipestages.recipes");
-        registry.addRecipes(Recipes.recipes, "recipestages.recipes");
+        registry.handleRecipes(RecipeStage.class, new StagedRecipeFactory(), VanillaRecipeCategoryUid.CRAFTING);
+        registry.addRecipes(Recipes.recipes, VanillaRecipeCategoryUid.CRAFTING);
     }
     
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         recipeRegistry = jeiRuntime.getRecipeRegistry();
-        for(Object o : recipeRegistry.getRecipeWrappers(recipeRegistry.getRecipeCategory("recipestages.recipes"))) {
-            System.out.println(o);
-            recipeRegistry.hideRecipe((IRecipeWrapper) o);
-        }
+//        for(Object o : recipeRegistry.getRecipeWrappers(recipeRegistry.getRecipeCategory(VanillaRecipeCategoryUid.CRAFTING))) {
+//            recipeRegistry.hideRecipe((IRecipeWrapper) o);
+//        }
     }
 }
