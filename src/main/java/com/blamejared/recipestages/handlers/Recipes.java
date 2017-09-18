@@ -36,31 +36,67 @@ public class Recipes {
     @ZenMethod
     public static void addShaped(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
         ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, false);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation(Reference.MOD_ID, name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation(Reference.MOD_ID, name))));
+        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
     
     @ZenMethod
+    public static void addShapedMirrored(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
+        ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, true);
+        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation("crafttweaker", name))));
+    }
+    
+    
+    @ZenMethod
     public static void addShapeless(String name, String stage, IItemStack output, IIngredient[] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
+        boolean valid = output != null;
+        for(IIngredient ing : ingredients) {
+            if(ing == null) {
+                valid = false;
+            }
+        }
+        if(!valid) {
+            CraftTweakerAPI.logError("Null not allowed in shapeless recipes! Recipe for: " + output + " not created!");
+            return;
+        }
         ShapelessRecipe recipe = new ShapelessRecipe(name, output, ingredients, function, action);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation(Reference.MOD_ID, name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation(Reference.MOD_ID, name))));
+        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
     
     @ZenMethod
     public static void addShaped(String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
         String name = calculateName(output, ingredients);
         ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, false);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation(Reference.MOD_ID, name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation(Reference.MOD_ID, name))));
+        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation("crafttweaker", name))));
+    }
+    
+    @ZenMethod
+    public static void addShapedMirrored(String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
+        String name = calculateName(output, ingredients);
+        ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, true);
+        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
     
     @ZenMethod
     public static void addShapeless(String stage, IItemStack output, IIngredient[] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
+        boolean valid = output != null;
+        for(IIngredient ing : ingredients) {
+            if(ing == null) {
+                valid = false;
+            }
+        }
+        if(!valid) {
+            CraftTweakerAPI.logError("Null not allowed in shapeless recipes! Recipe for: " + output + " not created!");
+            return;
+        }
         String name = calculateNameShapeless(output, ingredients);
         ShapelessRecipe recipe = new ShapelessRecipe(name, output, ingredients, function, action);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation(Reference.MOD_ID, name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation(Reference.MOD_ID, name))));
+        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
     
     @ZenMethod
