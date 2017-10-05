@@ -53,7 +53,6 @@ public class ClientEventHandler {
             System.out.println(PlayerDataHandler.getStageData((EntityPlayer) event.getEntity()).getUnlockedStages());
             if(PlayerDataHandler.getStageData((EntityPlayer) event.getEntity()).getUnlockedStages().isEmpty()) {
                 for(IRecipe recipe : Recipes.recipes) {
-                    System.out.println(recipe);
                     recipeRegistry.hideRecipe(recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING));
                 }
             }
