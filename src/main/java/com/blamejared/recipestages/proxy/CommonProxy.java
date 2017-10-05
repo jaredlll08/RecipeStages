@@ -11,4 +11,8 @@ public class CommonProxy {
     public void registerEvents() {
     
     }
+    
+    public boolean isClient() {
+        return false;
+    }
 }
