@@ -1,9 +1,6 @@
 package com.blamejared.recipestages.handlers;
 
-import com.blamejared.recipestages.RecipeStages;
 import com.blamejared.recipestages.recipes.RecipeStage;
-import com.blamejared.recipestages.reference.Reference;
-import com.sun.org.apache.bcel.internal.generic.IREM;
 import crafttweaker.*;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.*;
@@ -13,18 +10,14 @@ import crafttweaker.mc1120.CraftTweaker;
 import crafttweaker.mc1120.recipes.*;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import net.darkhax.bookshelf.lib.LoggingHelper;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.*;
-import net.minecraftforge.oredict.*;
 import stanhebben.zenscript.annotations.*;
 import stanhebben.zenscript.annotations.Optional;
 
 import java.util.*;
 
-import static crafttweaker.mc1120.recipes.MCRecipeManager.recipesToRemove;
 
 @ZenClass("mods.recipestages.Recipes")
 @ZenRegister

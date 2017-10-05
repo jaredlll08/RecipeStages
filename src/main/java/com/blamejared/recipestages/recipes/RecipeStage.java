@@ -107,6 +107,6 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
     
     @Override
     public String toString() {
-        return "RecipeStage{" + "tier='" + tier + '\'' + ", recipe=" + recipe + '}';
+        return "RecipeStage{" + "tier='" + tier + '\'' + ", recipe=" + recipe.getRecipeOutput() + ":" + recipe.getIngredients() + '}';
     }
 }
