@@ -2,7 +2,6 @@ package com.blamejared.recipestages.compat;
 
 
 import com.blamejared.recipestages.reference.Reference;
-import com.sun.org.apache.regexp.internal.RE;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;

@@ -53,13 +53,16 @@ public class StagedRecipeWrapper implements IRecipeWrapper {
         minecraft.fontRenderer.drawString("Stage: " + recipe.getTier(), 0, -11, 0);
     }
     
+    public RecipeStage getRecipe() {
+        return recipe;
+    }
     
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
-//        ResourceLocation registryName = recipe.getRegistryName();
-//        if(registryName != null) {
-//            return recipeInfoIcon.getTooltipStrings(registryName, mouseX, mouseY);
-//        }
+        //        ResourceLocation registryName = recipe.getRegistryName();
+        //        if(registryName != null) {
+        //            return recipeInfoIcon.getTooltipStrings(registryName, mouseX, mouseY);
+        //        }
         return Collections.emptyList();
     }
 }
