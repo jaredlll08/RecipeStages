@@ -10,6 +10,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -21,9 +22,22 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
     private String tier;
     private IRecipe recipe;
     
-    public RecipeStage(String tier, IRecipe recipe) {
+    private boolean shapeless;
+    
+    private int width, height;
+    
+    public RecipeStage(String tier, IRecipe recipe, boolean shapeless) {
         this.tier = tier;
         this.recipe = recipe;
+        this.shapeless = shapeless;
+    }
+    
+    public RecipeStage(String tier, IRecipe recipe, boolean shapeless, int width, int height) {
+        this.tier = tier;
+        this.recipe = recipe;
+        this.shapeless = shapeless;
+        this.width = width;
+        this.height = height;
     }
     
     @Override
@@ -108,5 +122,17 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
     @Override
     public String toString() {
         return "RecipeStage{" + "tier='" + tier + '\'' + ", recipe=" + recipe.getRecipeOutput() + ":" + recipe.getIngredients() + '}';
+    }
+    
+    public boolean isShapeless() {
+        return shapeless;
+    }
+    
+    public int getWidth() {
+        return width;
+    }
+    
+    public int getHeight() {
+        return height;
     }
 }

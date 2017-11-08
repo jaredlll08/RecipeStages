@@ -8,6 +8,10 @@ public class StagedRecipeFactory implements IRecipeWrapperFactory<RecipeStage> {
     
     @Override
     public IRecipeWrapper getRecipeWrapper(RecipeStage recipe) {
-        return new StagedRecipeWrapper(recipe);
+        if(recipe.isShapeless()){
+            return new StagedRecipeWrapperShapeless(JEIPlugin.jeiHelpers, recipe);
+        }else{
+            return new StagedRecipeWrapperShaped(JEIPlugin.jeiHelpers, recipe);
+        }
     }
 }
