@@ -71,10 +71,8 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
                     if(container == null) {
                         return false;
                     }
-                    
                     EntityPlayerMP foundPlayer = null;
                     Iterator var6 = manager.getPlayers().iterator();
-                    
                     while(var6.hasNext()) {
                         EntityPlayerMP entityPlayerMP = (EntityPlayerMP) var6.next();
                         if(entityPlayerMP.openContainer == container && container.canInteractWith(entityPlayerMP) && container.getCanCraft(entityPlayerMP)) {
@@ -85,14 +83,13 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
                             foundPlayer = entityPlayerMP;
                         }
                     }
-                    
                     if(foundPlayer != null) {
                         return PlayerDataHandler.getStageData(foundPlayer).hasUnlockedStage(tier);
                     }
                 }
             }
-            
-            return false;
+            //return true to work with auto crafting
+            return true;
         }
     }
     
