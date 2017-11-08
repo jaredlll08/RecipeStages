@@ -38,16 +38,6 @@ public class ClientEventHandler {
                     }
                 }
             }
-            //            for(IRecipe recipe : Recipes.recipes) {
-            //                recipeRegistry.hideRecipe(recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING));
-            //            }
-            //            PlayerDataHandler.IStageData data = PlayerDataHandler.getStageData(event.getPlayer());
-            //            for(IRecipe recipe : Recipes.recipes) {
-            //                if(data.getUnlockedStages().contains(((RecipeStage) recipe).getTier()) || event.getStageName().equalsIgnoreCase(((RecipeStage) recipe).getTier())) {
-            //                    recipeRegistry.unhideRecipe(recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING));
-            //                }
-            //
-            //            }
         }
     }
     
@@ -66,28 +56,7 @@ public class ClientEventHandler {
                     }
                 }
             }
-            //            for(IRecipe recipe : Recipes.recipes) {
-            //                recipeRegistry.hideRecipe(recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING));
-            //            }
-            //            PlayerDataHandler.IStageData data = PlayerDataHandler.getStageData(event.getPlayer());
-            //            for(IRecipe recipe : Recipes.recipes) {
-            //                if(data.getUnlockedStages().contains(((RecipeStage) recipe).getTier()) && !event.getStageName().equalsIgnoreCase(((RecipeStage) recipe).getTier())) {
-            //                    recipeRegistry.unhideRecipe(recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING));
-            //                }
-            //
-            //            }
         }
     }
     
-    //    @SubscribeEvent
-    //    public void onStageData(StageDataEvent.SyncRecieved event) {
-    //        for(IRecipe recipe : Recipes.recipes) {
-    //            recipeRegistry.hideRecipe(recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING));
-    //        }
-    //        PlayerDataHandler.IStageData data = PlayerDataHandler.getStageData(event.getPlayer());
-    //        for(IRecipe recipe : Recipes.recipes) {
-    //            if(data.getUnlockedStages().contains(((RecipeStage) recipe).getTier()))
-    //                recipeRegistry.unhideRecipe(recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING));
-    //        }
-    //    }
 }
