@@ -1,6 +1,7 @@
 package com.blamejared.recipestages.handlers;
 
 import com.blamejared.recipestages.recipes.RecipeStage;
+import com.blamejared.recipestages.reference.Reference;
 import crafttweaker.*;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.*;
@@ -12,8 +13,8 @@ import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import net.minecraft.item.crafting.*;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.common.registry.*;
-import net.minecraftforge.oredict.*;
 import stanhebben.zenscript.annotations.*;
 import stanhebben.zenscript.annotations.Optional;
 
@@ -25,6 +26,7 @@ import java.util.*;
 public class Recipes {
     
     public static List<IRecipe> recipes = new LinkedList<>();
+    public static Map<ResourceLocation, IItemStack> recipeOutputCache = new HashMap<>();
     private static TIntSet usedHashes = new TIntHashSet();
     
     @ZenMethod
@@ -95,10 +97,21 @@ public class Recipes {
     
     @ZenMethod
     public static void setRecipeStage(String stage, IIngredient output) {
-        List<IRecipe> recipes = new ArrayList<>();
-        ForgeRegistries.RECIPES.getEntries().stream().filter(recipe -> output.matches(CraftTweakerMC.getIItemStack(recipe.getValue().getRecipeOutput()))).forEach(recipe -> {
-            recipes.add(recipe.getValue());
-        });
+        if (recipeOutputCache.isEmpty()) {
+            for (Map.Entry<ResourceLocation, IRecipe> entry : ForgeRegistries.RECIPES.getEntries()) {
+                IItemStack stack = CraftTweakerMC.getIItemStack(entry.getValue().getRecipeOutput());
+                if (stack != null) {
+                    recipeOutputCache.put(entry.getKey(), stack);
+                }
+            }
+        }
+        for (Map.Entry<ResourceLocation, IItemStack> entry : recipeOutputCache.entrySet()) {
+            IItemStack stack = entry.getValue();
+            if (output.matches(stack)) {
+                IRecipe recipe = ForgeRegistries.RECIPES.getValue(entry.getKey());
+                recipes.add(recipe);
+            }
+        }
         if(!recipes.isEmpty())
             CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(recipes, stage));
         
@@ -124,31 +137,25 @@ public class Recipes {
         @Override
         public void apply() {
             for(IRecipe irecipe : recipes) {
-                boolean shapeless = irecipe instanceof ShapelessRecipeOre || irecipe instanceof ShapelessRecipe || irecipe instanceof ShapelessRecipeBasic || irecipe instanceof ShapelessRecipeAdvanced || irecipe instanceof ShapelessOreRecipe || irecipe instanceof ShapelessRecipes;
+                ResourceLocation registryName = irecipe.getRegistryName();
+                if (registryName == null)
+                    continue;
+
                 int width = 0, height = 0;
-                
-                if(!shapeless) {
-                    if(irecipe instanceof ShapedRecipe) {
-                        width = ((ShapedRecipe) irecipe).getWidth();
-                        height = ((ShapedRecipe) irecipe).getHeight();
-                    } else if(irecipe instanceof ShapedRecipes) {
-                        width = ((ShapedRecipes) irecipe).getWidth();
-                        height = ((ShapedRecipes) irecipe).getWidth();
-                    } else if(irecipe instanceof ShapedRecipeAdvanced) {
-                        width = ((ShapedRecipe) ((ShapedRecipeAdvanced) irecipe).getRecipe()).getWidth();
-                        height = ((ShapedRecipe) ((ShapedRecipeAdvanced) irecipe).getRecipe()).getHeight();
-                    } else if(irecipe instanceof ShapedOreRecipe) {
-                        width = ((ShapedOreRecipe) irecipe).getWidth();
-                        height = ((ShapedOreRecipe) irecipe).getHeight();
-                    } else if(irecipe instanceof ShapedRecipeOre) {
-                        width = ((ShapedRecipeOre) irecipe).getRecipeWidth();
-                        height = ((ShapedRecipeOre) irecipe).getRecipeHeight();
-                    } else if(irecipe instanceof ShapedRecipeBasic) {
-                        width = ((ShapedRecipeBasic) irecipe).getWidth();
-                        height = ((ShapedRecipeBasic) irecipe).getHeight();
-                    }
+                if(irecipe instanceof IShapedRecipe) {
+                    width = ((IShapedRecipe) irecipe).getRecipeWidth();
+                    height = ((IShapedRecipe) irecipe).getRecipeHeight();
+                } else if(irecipe instanceof ShapedRecipe) {
+                    width = ((ShapedRecipe) irecipe).getWidth();
+                    height = ((ShapedRecipe) irecipe).getHeight();
+                } else if(irecipe instanceof ShapedRecipeAdvanced) {
+                    width = ((ShapedRecipe) ((ShapedRecipeAdvanced) irecipe).getRecipe()).getWidth();
+                    height = ((ShapedRecipe) ((ShapedRecipeAdvanced) irecipe).getRecipe()).getHeight();
                 }
-                IRecipe recipe = new RecipeStage(stage, irecipe, shapeless, width, height).setRegistryName(irecipe.getRegistryName());
+
+                boolean shapeless = (width == 0 && height == 0);
+                ResourceLocation newRegistryName = new ResourceLocation(Reference.MOD_ID, registryName.getResourcePath());
+                IRecipe recipe = new RecipeStage(stage, irecipe, shapeless, width, height).setRegistryName(newRegistryName);
                 ForgeRegistries.RECIPES.register(recipe);
                 Recipes.recipes.add(recipe);
             }
