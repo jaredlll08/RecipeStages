@@ -199,9 +199,7 @@ public class Recipes {
         if (modContainer != null) {
             loader.setActiveModContainer(modContainer);
         }
-        try {
-            recipe.setRegistryName(registryName);
-        } catch (Throwable ignored) {}
+        recipe.setRegistryName(registryName);
         loader.setActiveModContainer(activeModContainer);
     }
     
