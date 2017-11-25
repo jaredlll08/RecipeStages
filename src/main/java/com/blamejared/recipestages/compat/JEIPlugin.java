@@ -31,7 +31,10 @@ public class JEIPlugin implements IModPlugin {
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         recipeRegistry = jeiRuntime.getRecipeRegistry();
         for(IRecipe recipe : Recipes.recipes) {
-            recipeRegistry.hideRecipe(recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING));
+            IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
+            if (recipeWrapper != null) {
+                recipeRegistry.hideRecipe(recipeWrapper);
+            }
         }
     }
 }
