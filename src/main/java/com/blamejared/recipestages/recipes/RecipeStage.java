@@ -1,6 +1,7 @@
 package com.blamejared.recipestages.recipes;
 
 import com.blamejared.recipestages.RecipeStages;
+import com.blamejared.recipestages.handlers.Recipes;
 import net.darkhax.gamestages.capabilities.PlayerDataHandler;
 import net.minecraft.entity.player.*;
 import net.minecraft.inventory.*;
@@ -10,7 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.common.util.*;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -61,6 +62,9 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
     public boolean isGoodForCrafting(InventoryCrafting inv) {
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
             EntityPlayer player = RecipeStages.proxy.getClientPlayer();
+            if(player == null || player instanceof FakePlayer) {
+                return true;
+            }
             return player != null && !PlayerDataHandler.getStageData(player).hasUnlockedStage(tier);
         } else {
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
@@ -88,8 +92,14 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
                     }
                 }
             }
-            //return true to work with auto crafting
-            return true;
+            if(Recipes.crafterStages.getOrDefault(inv.eventHandler.getClass().getName(), new String[0]).length > 0) {
+                for(String s : Recipes.crafterStages.get(inv.eventHandler.getClass().getName())) {
+                    if(tier.equalsIgnoreCase(s)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
     

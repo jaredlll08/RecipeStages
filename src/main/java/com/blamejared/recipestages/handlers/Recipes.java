@@ -1,7 +1,6 @@
 package com.blamejared.recipestages.handlers;
 
 import com.blamejared.recipestages.recipes.RecipeStage;
-import com.blamejared.recipestages.reference.Reference;
 import crafttweaker.*;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.*;
@@ -11,14 +10,13 @@ import crafttweaker.mc1120.CraftTweaker;
 import crafttweaker.mc1120.recipes.*;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import net.minecraft.item.crafting.*;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.IShapedRecipe;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.*;
-import stanhebben.zenscript.annotations.*;
+import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import stanhebben.zenscript.annotations.Optional;
+import stanhebben.zenscript.annotations.*;
 
 import java.util.*;
 
@@ -31,20 +29,26 @@ public class Recipes {
     public static ActionSetOutputStages actionSetOutputStages;
     private static TIntSet usedHashes = new TIntHashSet();
     
+    public static Map<String, String[]> crafterStages = new HashMap<>();
+    
+    @ZenMethod
+    public static void setContainerStage(String container, String[] stage) {
+        CraftTweaker.LATE_ACTIONS.add(new ActionSetCrafter(container, stage));
+    }
+    
     @ZenMethod
     public static void addShaped(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
         ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, false);
         IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
     
     @ZenMethod
     public static void addShapedMirrored(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
         ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, true);
         IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
-    
     
     @ZenMethod
     public static void addShapeless(String name, String stage, IItemStack output, IIngredient[] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
@@ -60,7 +64,7 @@ public class Recipes {
         }
         ShapelessRecipe recipe = new ShapelessRecipe(name, output, ingredients, function, action);
         IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe, true).setRegistryName(new ResourceLocation("crafttweaker", name))));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, true).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
     
     @ZenMethod
@@ -68,7 +72,7 @@ public class Recipes {
         String name = calculateName(output, ingredients);
         ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, false);
         IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
     
     @ZenMethod
@@ -76,7 +80,7 @@ public class Recipes {
         String name = calculateName(output, ingredients);
         ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, true);
         IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
     
     @ZenMethod
@@ -94,12 +98,12 @@ public class Recipes {
         String name = calculateNameShapeless(output, ingredients);
         ShapelessRecipe recipe = new ShapelessRecipe(name, output, ingredients, function, action);
         IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(new RecipeStage(stage, irecipe, true).setRegistryName(new ResourceLocation("crafttweaker", name))));
+        CraftTweaker.LATE_ACTIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, true).setRegistryName(new ResourceLocation("crafttweaker", name))));
     }
     
     @ZenMethod
     public static void setRecipeStage(String stage, IIngredient output) {
-        if (actionSetOutputStages == null) {
+        if(actionSetOutputStages == null) {
             actionSetOutputStages = new ActionSetOutputStages();
             CraftTweaker.LATE_ACTIONS.add(actionSetOutputStages);
         }
@@ -111,6 +115,36 @@ public class Recipes {
         IRecipe recipe = ForgeRegistries.RECIPES.getValue(new ResourceLocation(recipeName));
         CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), stage));
         
+    }
+    
+    private static class ActionSetCrafter implements IAction {
+        
+        private final String container;
+        private final String[] stage;
+        
+        public ActionSetCrafter(String container, String[] stage) {
+            this.container = container;
+            this.stage = stage;
+        }
+        
+        @Override
+        public void apply() {
+            crafterStages.put(container, stage);
+        }
+        
+        @Override
+        public String describe() {
+            return "Setting stage of: " + container + " to: " + expandArray(stage);
+        }
+        
+        private String expandArray(String[] arr) {
+            String ret = "";
+            StringBuilder builder = new StringBuilder("");
+            for(String s : arr) {
+                builder.append(s).append(", ");
+            }
+            return builder.reverse().deleteCharAt(0).deleteCharAt(0).reverse().toString();
+        }
     }
     
     private static class ActionSetStage implements IAction {
@@ -135,23 +169,24 @@ public class Recipes {
             return "Setting the stage for recipes that output: " + recipes.get(0).getRecipeOutput().getDisplayName();
         }
     }
-
+    
     private static class ActionSetOutputStages implements IAction {
+        
         private final Map<String, List<IItemStack>> outputs = new HashMap<>();
-
+        
         public void addOutput(String stage, IIngredient output) {
             List<IItemStack> outputsForStage = this.outputs.computeIfAbsent(stage, k -> new ArrayList<>());
             outputsForStage.addAll(output.getItems());
         }
-
+        
         @Override
         public void apply() {
-            for (IRecipe recipe : ForgeRegistries.RECIPES.getValues()) {
+            for(IRecipe recipe : ForgeRegistries.RECIPES.getValues()) {
                 IItemStack stack = CraftTweakerMC.getIItemStack(recipe.getRecipeOutput());
-                if (stack != null) {
-                    for (Map.Entry<String, List<IItemStack>> entry : outputs.entrySet()) {
-                        for (IItemStack output : entry.getValue()) {
-                            if (stack.matches(output)) {
+                if(stack != null) {
+                    for(Map.Entry<String, List<IItemStack>> entry : outputs.entrySet()) {
+                        for(IItemStack output : entry.getValue()) {
+                            if(stack.matches(output)) {
                                 replaceRecipe(entry.getKey(), recipe);
                                 break;
                             }
@@ -161,18 +196,18 @@ public class Recipes {
             }
             actionSetOutputStages = null;
         }
-
+        
         @Override
         public String describe() {
-            return "Setting the stages for recipes based on their output stack.";
+            return "Setting the stages for recipes based on their output stack, " + outputs.size();
         }
     }
-
+    
     private static void replaceRecipe(String stage, IRecipe iRecipe) {
         ResourceLocation registryName = iRecipe.getRegistryName();
-        if (registryName == null)
+        if(registryName == null)
             return;
-
+        
         int width = 0, height = 0;
         if(iRecipe instanceof IShapedRecipe) {
             width = ((IShapedRecipe) iRecipe).getRecipeWidth();
@@ -184,19 +219,19 @@ public class Recipes {
             width = ((ShapedRecipe) ((ShapedRecipeAdvanced) iRecipe).getRecipe()).getWidth();
             height = ((ShapedRecipe) ((ShapedRecipeAdvanced) iRecipe).getRecipe()).getHeight();
         }
-
+        
         boolean shapeless = (width == 0 && height == 0);
         IRecipe recipe = new RecipeStage(stage, iRecipe, shapeless, width, height);
         setRecipeRegistryName(recipe, registryName);
         ForgeRegistries.RECIPES.register(recipe);
         Recipes.recipes.add(recipe);
     }
-
+    
     private static void setRecipeRegistryName(IRecipe recipe, ResourceLocation registryName) {
         Loader loader = Loader.instance();
         ModContainer activeModContainer = loader.activeModContainer();
         ModContainer modContainer = loader.getIndexedModList().get(registryName.getResourceDomain());
-        if (modContainer != null) {
+        if(modContainer != null) {
             loader.setActiveModContainer(modContainer);
         }
         recipe.setRegistryName(registryName);
@@ -254,15 +289,20 @@ public class Recipes {
     private static class ActionAddRecipe implements IAction {
         
         private final IRecipe recipe;
+        private final ICraftingRecipe craftingRecipe;
         
-        public ActionAddRecipe(IRecipe recipe) {
+        public ActionAddRecipe(ICraftingRecipe craftingRecipe, IRecipe recipe) {
             this.recipe = recipe;
+            this.craftingRecipe = craftingRecipe;
         }
         
         @Override
         public void apply() {
             ForgeRegistries.RECIPES.register(recipe);
             recipes.add(recipe);
+            if(craftingRecipe.hasTransformers()) {
+                MCRecipeManager.transformerRecipes.add(craftingRecipe);
+            }
         }
         
         @Override
