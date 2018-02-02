@@ -30,10 +30,23 @@ public class Recipes {
     private static TIntSet usedHashes = new TIntHashSet();
     
     public static Map<String, String[]> crafterStages = new HashMap<>();
+    public static Map<String, String[]> packageStages = new HashMap<>();
+    
+    public static boolean printContainers = false;
+    
+    @ZenMethod
+    public static void setPrintContainers(boolean print) {
+        CraftTweaker.LATE_ACTIONS.add(new ActionSetPrinting(print));
+    }
     
     @ZenMethod
     public static void setContainerStage(String container, String[] stage) {
         CraftTweaker.LATE_ACTIONS.add(new ActionSetCrafter(container, stage));
+    }
+    
+    @ZenMethod
+    public static void setPackageStage(String pack, String[] stage) {
+        CraftTweaker.LATE_ACTIONS.add(new ActionSetPack(pack, stage));
     }
     
     @ZenMethod
@@ -117,6 +130,25 @@ public class Recipes {
         
     }
     
+    private static class ActionSetPrinting implements IAction {
+        
+        private final boolean print;
+        
+        public ActionSetPrinting(boolean print) {
+            this.print = print;
+        }
+        
+        @Override
+        public void apply() {
+            Recipes.printContainers = print;
+        }
+        
+        @Override
+        public String describe() {
+            return "Setting print containers to: " + print;
+        }
+    }
+    
     private static class ActionSetCrafter implements IAction {
         
         private final String container;
@@ -134,17 +166,30 @@ public class Recipes {
         
         @Override
         public String describe() {
-            return "Setting stage of: " + container + " to: " + expandArray(stage);
+            return "Setting stage of: " + container + " to: " + String.join(", ", stage);
+        }
+    }
+    
+    private static class ActionSetPack implements IAction {
+        
+        private final String pack;
+        private final String[] stage;
+        
+        public ActionSetPack(String container, String[] stage) {
+            this.pack = container;
+            this.stage = stage;
         }
         
-        private String expandArray(String[] arr) {
-            String ret = "";
-            StringBuilder builder = new StringBuilder("");
-            for(String s : arr) {
-                builder.append(s).append(", ");
-            }
-            return builder.reverse().deleteCharAt(0).deleteCharAt(0).reverse().toString();
+        @Override
+        public void apply() {
+            packageStages.put(pack, stage);
         }
+        
+        @Override
+        public String describe() {
+            return "Setting stage of: " + pack + " to: " + String.join(", ", stage);
+        }
+        
     }
     
     private static class ActionSetStage implements IAction {
@@ -186,7 +231,7 @@ public class Recipes {
                 if(stack != null) {
                     for(Map.Entry<String, List<IItemStack>> entry : outputs.entrySet()) {
                         for(IItemStack output : entry.getValue()) {
-                            if(stack.matches(output)) {
+                            if(output.matches(stack)) {
                                 replaceRecipe(entry.getKey(), recipe);
                                 break;
                             }

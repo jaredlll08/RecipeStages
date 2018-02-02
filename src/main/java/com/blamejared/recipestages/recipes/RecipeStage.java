@@ -9,14 +9,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
-import net.minecraft.util.*;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.*;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-import java.util.Iterator;
+import java.util.*;
 
 public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
     
@@ -65,7 +65,7 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
             if(player == null || player instanceof FakePlayer) {
                 return true;
             }
-            return player != null && !PlayerDataHandler.getStageData(player).hasUnlockedStage(tier);
+            return PlayerDataHandler.getStageData(player).hasUnlockedStage(tier);
         } else {
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
             if(server != null) {
@@ -92,6 +92,8 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
                     }
                 }
             }
+            if(Recipes.printContainers)
+                System.out.println("Current container: " + inv.eventHandler.getClass().getName());
             if(Recipes.crafterStages.getOrDefault(inv.eventHandler.getClass().getName(), new String[0]).length > 0) {
                 for(String s : Recipes.crafterStages.get(inv.eventHandler.getClass().getName())) {
                     if(tier.equalsIgnoreCase(s)) {
@@ -99,6 +101,19 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
                     }
                 }
             }
+            for(Map.Entry<String, String[]> entry : Recipes.packageStages.entrySet()) {
+                String pack = entry.getKey().toLowerCase();
+                String[] stages = entry.getValue();
+                if(inv.eventHandler.getClass().getName().toLowerCase().startsWith(pack)){
+                    for(String s : stages) {
+                        if(tier.equalsIgnoreCase(s)) {
+                            return true;
+                        }
+                    }
+                }
+                
+            }
+            
             return false;
         }
     }
