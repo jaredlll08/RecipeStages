@@ -19,6 +19,8 @@ import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.*;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @ZenClass("mods.recipestages.Recipes")
@@ -127,7 +129,19 @@ public class Recipes {
     public static void setRecipeStage(String stage, String recipeName) {
         IRecipe recipe = ForgeRegistries.RECIPES.getValue(new ResourceLocation(recipeName));
         CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), stage));
-        
+    }
+
+    @ZenMethod
+    public static void setRecipeStageByRegex(String stage, String regexString) {
+        Pattern pattern = Pattern.compile(regexString);
+
+        for(ResourceLocation resourceLocation : ForgeRegistries.RECIPES.getKeys()) {
+            Matcher m = pattern.matcher(resourceLocation.toString());
+            if(m.matches()) {
+                IRecipe recipe = ForgeRegistries.RECIPES.getValue(resourceLocation);
+                CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), stage));
+            }
+        }
     }
     
     private static class ActionSetPrinting implements IAction {
