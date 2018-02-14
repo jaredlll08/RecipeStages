@@ -19,8 +19,7 @@ import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.*;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 
 @ZenClass("mods.recipestages.Recipes")
@@ -29,6 +28,12 @@ public class Recipes {
     
     public static List<IRecipe> recipes = new LinkedList<>();
     public static ActionSetOutputStages actionSetOutputStages;
+    public static ActionSetRegexStages actionSetRegexStages;
+    public static ActionSetNameStages actionSetNameStages;
+    public static ActionSetModidStages actionSetModidStages;
+    
+    
+    
     private static TIntSet usedHashes = new TIntHashSet();
     
     public static Map<String, String[]> crafterStages = new HashMap<>();
@@ -127,21 +132,29 @@ public class Recipes {
     
     @ZenMethod
     public static void setRecipeStage(String stage, String recipeName) {
-        IRecipe recipe = ForgeRegistries.RECIPES.getValue(new ResourceLocation(recipeName));
-        CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), stage));
+        if(actionSetNameStages == null) {
+            actionSetNameStages = new ActionSetNameStages();
+            CraftTweaker.LATE_ACTIONS.add(actionSetNameStages);
+        }
+        actionSetNameStages.addName(stage, recipeName);
     }
-
+    
     @ZenMethod
     public static void setRecipeStageByRegex(String stage, String regexString) {
-        Pattern pattern = Pattern.compile(regexString);
-
-        for(ResourceLocation resourceLocation : ForgeRegistries.RECIPES.getKeys()) {
-            Matcher m = pattern.matcher(resourceLocation.toString());
-            if(m.matches()) {
-                IRecipe recipe = ForgeRegistries.RECIPES.getValue(resourceLocation);
-                CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), stage));
-            }
+        if(actionSetRegexStages == null) {
+            actionSetRegexStages = new ActionSetRegexStages();
+            CraftTweaker.LATE_ACTIONS.add(actionSetRegexStages);
         }
+        actionSetRegexStages.addRegex(stage, regexString);
+    }
+    
+    @ZenMethod
+    public static void setRecipeStageByMod(String stage, String modid) {
+        if(actionSetModidStages == null) {
+            actionSetModidStages = new ActionSetModidStages();
+            CraftTweaker.LATE_ACTIONS.add(actionSetModidStages);
+        }
+        actionSetModidStages.addModid(stage, modid);
     }
     
     private static class ActionSetPrinting implements IAction {
@@ -262,6 +275,102 @@ public class Recipes {
         }
     }
     
+    private static class ActionSetRegexStages implements IAction {
+        
+        private final Map<String, List<String>> outputs = new HashMap<>();
+        
+        public void addRegex(String stage, String regex) {
+            List<String> outputsForStage = this.outputs.computeIfAbsent(stage, k -> new ArrayList<>());
+            outputsForStage.add(regex);
+        }
+        
+        @Override
+        public void apply() {
+            
+            for(Map.Entry<ResourceLocation, IRecipe> ent : ForgeRegistries.RECIPES.getEntries()) {
+                for(Map.Entry<String, List<String>> entry : outputs.entrySet()) {
+                    for(String s : entry.getValue()) {
+                        Pattern pattern = Pattern.compile(s);
+                        Matcher m = pattern.matcher(ent.getKey().toString());
+                        if(m.matches()) {
+                            IRecipe recipe = ent.getValue();
+                            CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), entry.getKey()));
+                        }
+                    }
+                    
+                }
+            }
+            actionSetRegexStages = null;
+        }
+        
+        @Override
+        public String describe() {
+            return "Setting the stages for recipes based on regex, " + outputs.size();
+        }
+    }
+    
+    private static class ActionSetNameStages implements IAction {
+        
+        private final Map<String, List<String>> outputs = new HashMap<>();
+        
+        public void addName(String stage, String name) {
+            List<String> outputsForStage = this.outputs.computeIfAbsent(stage, k -> new ArrayList<>());
+            outputsForStage.add(name);
+        }
+        
+        @Override
+        public void apply() {
+            
+            for(Map.Entry<ResourceLocation, IRecipe> ent : ForgeRegistries.RECIPES.getEntries()) {
+                for(Map.Entry<String, List<String>> entry : outputs.entrySet()) {
+                    for(String s : entry.getValue()) {
+                        if(s.equalsIgnoreCase(ent.getKey().toString())) {
+                            IRecipe recipe = ent.getValue();
+                            CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), entry.getKey()));
+                        }
+                    }
+                    
+                }
+            }
+            actionSetNameStages = null;
+        }
+        
+        @Override
+        public String describe() {
+            return "Setting the stages for recipes based on regex, " + outputs.size();
+        }
+    }
+    private static class ActionSetModidStages implements IAction {
+        
+        private final Map<String, List<String>> outputs = new HashMap<>();
+        
+        public void addModid(String stage, String modid) {
+            List<String> outputsForStage = this.outputs.computeIfAbsent(stage, k -> new ArrayList<>());
+            outputsForStage.add(modid);
+        }
+        
+        @Override
+        public void apply() {
+            
+            for(Map.Entry<ResourceLocation, IRecipe> ent : ForgeRegistries.RECIPES.getEntries()) {
+                for(Map.Entry<String, List<String>> entry : outputs.entrySet()) {
+                    for(String s : entry.getValue()) {
+                        if(s.equalsIgnoreCase(ent.getKey().getResourceDomain())) {
+                            IRecipe recipe = ent.getValue();
+                            CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), entry.getKey()));
+                        }
+                    }
+                    
+                }
+            }
+            actionSetNameStages = null;
+        }
+        
+        @Override
+        public String describe() {
+            return "Setting the stages for recipes based on modid, " + outputs.size();
+        }
+    }
     private static void replaceRecipe(String stage, IRecipe iRecipe) {
         ResourceLocation registryName = iRecipe.getRegistryName();
         if(registryName == null)
