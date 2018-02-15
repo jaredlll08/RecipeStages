@@ -249,6 +249,7 @@ public class Recipes {
         public void addOutput(String stage, IIngredient output) {
             List<IItemStack> outputsForStage = this.outputs.computeIfAbsent(stage, k -> new ArrayList<>());
             outputsForStage.addAll(output.getItems());
+            CraftTweakerAPI.logInfo("Adding: " + output + " to stage: \"" + stage + "\"");
         }
         
         @Override
@@ -271,7 +272,7 @@ public class Recipes {
         
         @Override
         public String describe() {
-            return "Setting the stages for recipes based on their output stack, " + outputs.size();
+            return "Setting the stages for recipes based on their output stack, " + outputs.size() + " stages";
         }
     }
     
@@ -294,7 +295,7 @@ public class Recipes {
                         Matcher m = pattern.matcher(ent.getKey().toString());
                         if(m.matches()) {
                             IRecipe recipe = ent.getValue();
-                            CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), entry.getKey()));
+                            new ActionSetStage(Collections.singletonList(recipe), entry.getKey()).apply();
                         }
                     }
                     
@@ -326,7 +327,7 @@ public class Recipes {
                     for(String s : entry.getValue()) {
                         if(s.equalsIgnoreCase(ent.getKey().toString())) {
                             IRecipe recipe = ent.getValue();
-                            CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), entry.getKey()));
+                            new ActionSetStage(Collections.singletonList(recipe), entry.getKey()).apply();
                         }
                     }
                     
@@ -357,7 +358,7 @@ public class Recipes {
                     for(String s : entry.getValue()) {
                         if(s.equalsIgnoreCase(ent.getKey().getResourceDomain())) {
                             IRecipe recipe = ent.getValue();
-                            CraftTweaker.LATE_ACTIONS.add(new ActionSetStage(Collections.singletonList(recipe), entry.getKey()));
+                            new ActionSetStage(Collections.singletonList(recipe), entry.getKey()).apply();
                         }
                     }
                     

@@ -68,27 +68,28 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
             return PlayerDataHandler.getStageData(player).hasUnlockedStage(tier);
         } else {
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-            
             if(server != null) {
                 PlayerList manager = server.getPlayerList();
-                Container container = inv.eventHandler;
-                if(container == null) {
-                    return false;
-                }
-                EntityPlayerMP foundPlayer = null;
-                Iterator var6 = manager.getPlayers().iterator();
-                while(var6.hasNext()) {
-                    EntityPlayerMP entityPlayerMP = (EntityPlayerMP) var6.next();
-                    if(entityPlayerMP.openContainer == container && container.canInteractWith(entityPlayerMP) && container.getCanCraft(entityPlayerMP)) {
-                        if(foundPlayer != null) {
-                            return false;
-                        }
-                        
-                        foundPlayer = entityPlayerMP;
+                if(manager != null) {
+                    Container container = inv.eventHandler;
+                    if(container == null) {
+                        return false;
                     }
-                }
-                if(foundPlayer != null) {
-                    return PlayerDataHandler.getStageData(foundPlayer).hasUnlockedStage(tier);
+                    EntityPlayerMP foundPlayer = null;
+                    Iterator var6 = manager.getPlayers().iterator();
+                    while(var6.hasNext()) {
+                        EntityPlayerMP entityPlayerMP = (EntityPlayerMP) var6.next();
+                        if(entityPlayerMP.openContainer == container && container.canInteractWith(entityPlayerMP) && container.getCanCraft(entityPlayerMP)) {
+                            if(foundPlayer != null) {
+                                return false;
+                            }
+                            
+                            foundPlayer = entityPlayerMP;
+                        }
+                    }
+                    if(foundPlayer != null) {
+                        return PlayerDataHandler.getStageData(foundPlayer).hasUnlockedStage(tier);
+                    }
                 }
             }
             if(Recipes.printContainers)
@@ -103,7 +104,7 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
             for(Map.Entry<String, String[]> entry : Recipes.packageStages.entrySet()) {
                 String pack = entry.getKey().toLowerCase();
                 String[] stages = entry.getValue();
-                if(inv.eventHandler.getClass().getName().toLowerCase().startsWith(pack)) {
+                if(inv.eventHandler.getClass().getName().toLowerCase().startsWith(pack)){
                     for(String s : stages) {
                         if(tier.equalsIgnoreCase(s)) {
                             return true;
