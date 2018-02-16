@@ -2,6 +2,7 @@ package com.blamejared.recipestages.handlers;
 
 import com.blamejared.recipestages.RecipeStages;
 import com.blamejared.recipestages.recipes.RecipeStage;
+import com.sun.naming.internal.FactoryEnumeration;
 import crafttweaker.*;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.*;
@@ -253,7 +254,8 @@ public class Recipes {
         
         @Override
         public void apply() {
-            for(IRecipe recipe : ForgeRegistries.RECIPES.getValues()) {
+            List<IRecipe> values = new ArrayList<>(ForgeRegistries.RECIPES.getValues());
+            for(IRecipe recipe : values) {
                 IItemStack stack = CraftTweakerMC.getIItemStack(recipe.getRecipeOutput());
                 if(stack != null) {
                     for(Map.Entry<String, List<IItemStack>> entry : outputs.entrySet()) {
@@ -286,8 +288,9 @@ public class Recipes {
         
         @Override
         public void apply() {
-            
-            for(Map.Entry<ResourceLocation, IRecipe> ent : ForgeRegistries.RECIPES.getEntries()) {
+    
+            Set<Map.Entry<ResourceLocation, IRecipe>> entries = new HashSet<>(ForgeRegistries.RECIPES.getEntries());
+            for(Map.Entry<ResourceLocation, IRecipe> ent : entries) {
                 for(Map.Entry<String, List<String>> entry : outputs.entrySet()) {
                     for(String s : entry.getValue()) {
                         Pattern pattern = Pattern.compile(s);
@@ -320,8 +323,9 @@ public class Recipes {
         
         @Override
         public void apply() {
-            
-            for(Map.Entry<ResourceLocation, IRecipe> ent : ForgeRegistries.RECIPES.getEntries()) {
+    
+            Set<Map.Entry<ResourceLocation, IRecipe>> entries = new HashSet<>(ForgeRegistries.RECIPES.getEntries());
+            for(Map.Entry<ResourceLocation, IRecipe> ent : entries) {
                 for(Map.Entry<String, List<String>> entry : outputs.entrySet()) {
                     for(String s : entry.getValue()) {
                         if(s.equalsIgnoreCase(ent.getKey().toString())) {
@@ -352,8 +356,9 @@ public class Recipes {
         
         @Override
         public void apply() {
-            
-            for(Map.Entry<ResourceLocation, IRecipe> ent : ForgeRegistries.RECIPES.getEntries()) {
+    
+            Set<Map.Entry<ResourceLocation, IRecipe>> entries = new HashSet<>(ForgeRegistries.RECIPES.getEntries());
+            for(Map.Entry<ResourceLocation, IRecipe> ent : entries) {
                 for(Map.Entry<String, List<String>> entry : outputs.entrySet()) {
                     for(String s : entry.getValue()) {
                         if(s.equalsIgnoreCase(ent.getKey().getResourceDomain())) {
