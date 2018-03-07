@@ -2,13 +2,13 @@ package com.blamejared.recipestages.handlers;
 
 import com.blamejared.recipestages.RecipeStages;
 import com.blamejared.recipestages.recipes.RecipeStage;
-import com.sun.naming.internal.FactoryEnumeration;
 import crafttweaker.*;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.*;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.recipes.*;
 import crafttweaker.mc1120.recipes.*;
+import crafttweaker.mc1120.recipes.ShapedRecipeAdvanced;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import net.minecraft.item.crafting.IRecipe;
@@ -33,8 +33,8 @@ public class Recipes {
     public static ActionSetNameStages actionSetNameStages;
     public static ActionSetModidStages actionSetModidStages;
     
-    
     private static TIntSet usedHashes = new TIntHashSet();
+    private static HashSet<String> usedRecipeNames = new HashSet<>();
     
     public static Map<String, String[]> crafterStages = new HashMap<>();
     public static Map<String, String[]> packageStages = new HashMap<>();
@@ -57,50 +57,23 @@ public class Recipes {
     }
     
     @ZenMethod
-    public static void addShaped(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
-        ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, false);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
-    }
-    
-    @ZenMethod
-    public static void addShapedMirrored(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
-        ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, true);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
-    }
-    
-    @ZenMethod
-    public static void addShapeless(String name, String stage, IItemStack output, IIngredient[] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
-        boolean valid = output != null;
-        for(IIngredient ing : ingredients) {
-            if(ing == null) {
-                valid = false;
-            }
-        }
-        if(!valid) {
-            CraftTweakerAPI.logError("Null not allowed in shapeless recipes! Recipe for: " + output + " not created!");
-            return;
-        }
-        ShapelessRecipe recipe = new ShapelessRecipe(name, output, ingredients, function, action);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, true).setRegistryName(new ResourceLocation("crafttweaker", name))));
-    }
-    
-    @ZenMethod
     public static void addShaped(String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
-        String name = calculateName(output, ingredients);
-        ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, false);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, output, ingredients, function, action, false, false));
+    }
+    
+    @ZenMethod
+    public static void addShaped(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, name, output, ingredients, function, action, false, false));
     }
     
     @ZenMethod
     public static void addShapedMirrored(String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
-        String name = calculateName(output, ingredients);
-        ShapedRecipe recipe = new ShapedRecipe(name, output, ingredients, function, action, true);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, false, recipe.getWidth(), recipe.getHeight()).setRegistryName(new ResourceLocation("crafttweaker", name))));
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, output, ingredients, function, action, true, false));
+    }
+    
+    @ZenMethod
+    public static void addShapedMirrored(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, name, output, ingredients, function, action, true, false));
     }
     
     @ZenMethod
@@ -115,11 +88,24 @@ public class Recipes {
             CraftTweakerAPI.logError("Null not allowed in shapeless recipes! Recipe for: " + output + " not created!");
             return;
         }
-        String name = calculateNameShapeless(output, ingredients);
-        ShapelessRecipe recipe = new ShapelessRecipe(name, output, ingredients, function, action);
-        IRecipe irecipe = RecipeConverter.convert(recipe, new ResourceLocation("crafttweaker", name));
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddRecipe(recipe, new RecipeStage(stage, irecipe, true).setRegistryName(new ResourceLocation("crafttweaker", name))));
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapelessRecipe(stage, output, ingredients, function, action));
     }
+    
+    @ZenMethod
+    public static void addShapeless(String name, String stage, IItemStack output, IIngredient[] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
+        boolean valid = output != null;
+        for(IIngredient ing : ingredients) {
+            if(ing == null) {
+                valid = false;
+            }
+        }
+        if(!valid) {
+            CraftTweakerAPI.logError("Null not allowed in shapeless recipes! Recipe for: " + output + " not created!");
+            return;
+        }
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapelessRecipe( stage, name, output, ingredients, function, action, false));
+    }
+    
     
     @ZenMethod
     public static void setRecipeStage(String stage, IIngredient output) {
@@ -288,7 +274,7 @@ public class Recipes {
         
         @Override
         public void apply() {
-    
+            
             Set<Map.Entry<ResourceLocation, IRecipe>> entries = new HashSet<>(ForgeRegistries.RECIPES.getEntries());
             for(Map.Entry<ResourceLocation, IRecipe> ent : entries) {
                 for(Map.Entry<String, List<String>> entry : outputs.entrySet()) {
@@ -323,7 +309,7 @@ public class Recipes {
         
         @Override
         public void apply() {
-    
+            
             Set<Map.Entry<ResourceLocation, IRecipe>> entries = new HashSet<>(ForgeRegistries.RECIPES.getEntries());
             for(Map.Entry<ResourceLocation, IRecipe> ent : entries) {
                 for(Map.Entry<String, List<String>> entry : outputs.entrySet()) {
@@ -356,7 +342,7 @@ public class Recipes {
         
         @Override
         public void apply() {
-    
+            
             Set<Map.Entry<ResourceLocation, IRecipe>> entries = new HashSet<>(ForgeRegistries.RECIPES.getEntries());
             for(Map.Entry<ResourceLocation, IRecipe> ent : entries) {
                 for(Map.Entry<String, List<String>> entry : outputs.entrySet()) {
@@ -387,12 +373,6 @@ public class Recipes {
         if(iRecipe instanceof IShapedRecipe) {
             width = ((IShapedRecipe) iRecipe).getRecipeWidth();
             height = ((IShapedRecipe) iRecipe).getRecipeHeight();
-        } else if(iRecipe instanceof ShapedRecipe) {
-            width = ((ShapedRecipe) iRecipe).getWidth();
-            height = ((ShapedRecipe) iRecipe).getHeight();
-        } else if(iRecipe instanceof ShapedRecipeAdvanced) {
-            width = ((ShapedRecipe) ((ShapedRecipeAdvanced) iRecipe).getRecipe()).getWidth();
-            height = ((ShapedRecipe) ((ShapedRecipeAdvanced) iRecipe).getRecipe()).getHeight();
         }
         
         boolean shapeless = (width == 0 && height == 0);
@@ -461,30 +441,105 @@ public class Recipes {
         return s.replace(":", "_");
     }
     
-    private static class ActionAddRecipe implements IAction {
+    
+    private static class ActionAddShapedRecipe extends ActionBaseAddRecipe {
         
-        private final IRecipe recipe;
-        private final ICraftingRecipe craftingRecipe;
+        public ActionAddShapedRecipe(String stage, IItemStack output, IIngredient[][] ingredients, IRecipeFunction function, IRecipeAction action, boolean mirrored, boolean hidden) {
+            this(stage, null, output, ingredients, function, action, mirrored, hidden);
+        }
         
-        public ActionAddRecipe(ICraftingRecipe craftingRecipe, IRecipe recipe) {
+        public ActionAddShapedRecipe(String stage, String name, IItemStack output, IIngredient[][] ingredients, IRecipeFunction function, IRecipeAction action, boolean mirrored, boolean hidden) {
+            super(new RecipeStage(stage, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden), false, ingredients.length, ingredients[0].length), output, true, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden).hasTransformers());
+            setName(name);
+        }
+    }
+    
+    private static class ActionAddShapelessRecipe extends ActionBaseAddRecipe {
+        
+        public ActionAddShapelessRecipe(String stage, IItemStack output, IIngredient[] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
+            this(stage, null, output, ingredients, function, action, false);
+        }
+        
+        public ActionAddShapelessRecipe(String stage, String name, IItemStack output, IIngredient[] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action, boolean hidden) {
+            super(new RecipeStage(stage, new MCRecipeShapeless(ingredients, output, function, action, hidden), true), output, false, new MCRecipeShapeless(ingredients, output, function, action, hidden).hasTransformers());
+            setName(name);
+        }
+    }
+    
+    public static class ActionBaseAddRecipe implements IAction {
+        
+        // this is != null only _after_ it has been applied and is actually registered
+        protected RecipeStage recipe;
+        protected IItemStack output;
+        protected boolean isShaped;
+        protected String name;
+        
+        @Deprecated
+        public ActionBaseAddRecipe() {
+        }
+        
+        private ActionBaseAddRecipe(RecipeStage recipe, IItemStack output, boolean isShaped, boolean hasTransformers) {
             this.recipe = recipe;
-            this.craftingRecipe = craftingRecipe;
+            this.output = output;
+            this.isShaped = isShaped;
+            if(hasTransformers)
+                MCRecipeManager.transformerRecipes.add((MCRecipeBase) recipe.getRecipe());
+        }
+        
+        public IItemStack getOutput() {
+            return output;
+        }
+        
+        public void setOutput(IItemStack output) {
+            this.output = output;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        protected void setName(String name) {
+            if(name != null) {
+                String proposedName = cleanRecipeName(name);
+                if(usedRecipeNames.contains(proposedName)) {
+                    this.name = calculateName();
+                    CraftTweakerAPI.logWarning("Recipe name [" + name + "] has duplicate uses, defaulting to calculated hash!");
+                } else {
+                    this.name = proposedName;
+                }
+            } else {
+                this.name = calculateName();
+            }
+            usedRecipeNames.add(this.name); //TODO: FINISH THIS and replace stuff in constructor call.
+        }
+        
+        public String calculateName() {
+            int hash = ((MCRecipeBase) recipe.getRecipe()).toCommandString().hashCode();
+            while(usedHashes.contains(hash))
+                ++hash;
+            usedHashes.add(hash);
+            
+            return (isShaped ? "ct_shaped" : "ct_shapeless") + hash;
         }
         
         @Override
         public void apply() {
-            ForgeRegistries.RECIPES.register(recipe);
+            ForgeRegistries.RECIPES.register(recipe.setRegistryName(new ResourceLocation("crafttweaker", name)));
             recipes.add(recipe);
-            if(craftingRecipe.hasTransformers()) {
-                MCRecipeManager.transformerRecipes.add(craftingRecipe);
-            }
         }
         
         @Override
         public String describe() {
-            return "Adding recipe for " + recipe.getRecipeOutput().getDisplayName();
+            if(output != null) {
+                return "Adding " + (isShaped ? "shaped" : "shapeless") + " recipe for " + output.getDisplayName() + " with name " + name;
+            } else {
+                return "Trying to add " + (isShaped ? "shaped" : "shapeless") + "recipe without correct output";
+            }
         }
         
+        public MCRecipeBase getRecipe() {
+            return ((MCRecipeWrapper) recipe.getRecipe());
+        }
     }
     
     
