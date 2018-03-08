@@ -449,7 +449,7 @@ public class Recipes {
         }
         
         public ActionAddShapedRecipe(String stage, String name, IItemStack output, IIngredient[][] ingredients, IRecipeFunction function, IRecipeAction action, boolean mirrored, boolean hidden) {
-            super(new RecipeStage(stage, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden), false, ingredients.length, ingredients[0].length), output, true, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden).hasTransformers());
+            super(new RecipeStage(stage, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden), false, ingredients[0].length, ingredients.length), output, true, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden).hasTransformers());
             setName(name);
         }
     }
