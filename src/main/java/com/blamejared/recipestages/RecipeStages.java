@@ -2,9 +2,13 @@ package com.blamejared.recipestages;
 
 import com.blamejared.recipestages.proxy.CommonProxy;
 import crafttweaker.*;
+import net.darkhax.bookshelf.util.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.relauncher.*;
 
 import java.util.*;
 
@@ -34,5 +38,17 @@ public class RecipeStages {
             e.printStackTrace();
             CraftTweakerAPI.logError("Problems while loading " + MOD_NAME + " scripts!", e);
         }
+    }
+    
+    @EventHandler
+    @SideOnly(Side.CLIENT)
+    public void onFMLLoadComplete(FMLLoadCompleteEvent event) {
+        // Add a resource reload listener to keep up to sync with JEI.
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(listener -> {
+            
+            if(Loader.isModLoaded("jei") && GameUtils.isClient()) {
+                proxy.syncJEI(PlayerUtils.getClientPlayer());
+            }
+        });
     }
 }

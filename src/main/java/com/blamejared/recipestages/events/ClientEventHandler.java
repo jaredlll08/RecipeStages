@@ -1,5 +1,6 @@
 package com.blamejared.recipestages.events;
 
+import com.blamejared.recipestages.RecipeStages;
 import com.blamejared.recipestages.handlers.Recipes;
 import com.blamejared.recipestages.recipes.RecipeStage;
 import mezz.jei.api.IRecipeRegistry;
@@ -25,44 +26,22 @@ public class ClientEventHandler {
     
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    public void onGamestageSync (StageDataEvent.SyncRecieved event) {
+    public void onGamestageSync(StageDataEvent.SyncRecieved event) {
         
-        if (GameUtils.isClient()) {
-    
-            syncJEI(event.getPlayer());
+        if(GameUtils.isClient()) {
+            RecipeStages.proxy.syncJEI(event.getPlayer());
         }
     }
     
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    public void onClientSync (GameStageEvent.ClientSync event) {
+    public void onClientSync(GameStageEvent.ClientSync event) {
         
-        if (GameUtils.isClient()) {
-           
-           syncJEI(event.getPlayer());
+        if(GameUtils.isClient()) {
+            
+            RecipeStages.proxy.syncJEI(event.getPlayer());
         }
     }
     
-    public void syncJEI(EntityPlayer player){
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-            for(IRecipe recipe : Recipes.recipes) {
-                IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
-                if(recipeWrapper != null) {
-                    recipeRegistry.hideRecipe(recipeWrapper);
-                }
-            }
-            String guid = VanillaRecipeCategoryUid.CRAFTING;
-            IRecipeRegistry reg = recipeRegistry;
-            for(IRecipe recipe : Recipes.recipes) {
-                if(recipe instanceof RecipeStage) {
-                    RecipeStage rec = (RecipeStage) recipe;
-                    if(PlayerDataHandler.getStageData(player).hasUnlockedStage(rec.getTier())) {
-                        IRecipeWrapper wrapper = reg.getRecipeWrapper(rec, guid);
-                        reg.unhideRecipe(wrapper);
-                    }
-                }
-            }
-        }
-    }
     
 }
