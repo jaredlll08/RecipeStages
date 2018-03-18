@@ -37,20 +37,22 @@ public class ClientProxy extends CommonProxy {
     public void syncJEI(EntityPlayer player) {
         super.syncJEI(player);
         if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-            for(IRecipe recipe : Recipes.recipes) {
-                IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
-                if(recipeWrapper != null) {
-                    recipeRegistry.hideRecipe(recipeWrapper);
+            if(recipeRegistry != null) {
+                for(IRecipe recipe : Recipes.recipes) {
+                    IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
+                    if(recipeWrapper != null) {
+                        recipeRegistry.hideRecipe(recipeWrapper);
+                    }
                 }
-            }
-            String guid = VanillaRecipeCategoryUid.CRAFTING;
-            IRecipeRegistry reg = recipeRegistry;
-            for(IRecipe recipe : Recipes.recipes) {
-                if(recipe instanceof RecipeStage) {
-                    RecipeStage rec = (RecipeStage) recipe;
-                    if(PlayerDataHandler.getStageData(player).hasUnlockedStage(rec.getTier())) {
-                        IRecipeWrapper wrapper = reg.getRecipeWrapper(rec, guid);
-                        reg.unhideRecipe(wrapper);
+                String guid = VanillaRecipeCategoryUid.CRAFTING;
+                IRecipeRegistry reg = recipeRegistry;
+                for(IRecipe recipe : Recipes.recipes) {
+                    if(recipe instanceof RecipeStage) {
+                        RecipeStage rec = (RecipeStage) recipe;
+                        if(PlayerDataHandler.getStageData(player).hasUnlockedStage(rec.getTier())) {
+                            IRecipeWrapper wrapper = reg.getRecipeWrapper(rec, guid);
+                            reg.unhideRecipe(wrapper);
+                        }
                     }
                 }
             }
