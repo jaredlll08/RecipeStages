@@ -58,22 +58,22 @@ public class Recipes {
     
     @ZenMethod
     public static void addShaped(String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, output, ingredients, function, action, false, false));
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, output, new MCRecipeShaped(ingredients, output, function, action, false, false)));
     }
     
     @ZenMethod
     public static void addShaped(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, name, output, ingredients, function, action, false, false));
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, name, output, new MCRecipeShaped(ingredients, output, function, action, false, false)));
     }
     
     @ZenMethod
     public static void addShapedMirrored(String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, output, ingredients, function, action, true, false));
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, output, new MCRecipeShaped(ingredients, output, function, action, true, false)));
     }
     
     @ZenMethod
     public static void addShapedMirrored(String name, String stage, IItemStack output, IIngredient[][] ingredients, @Optional IRecipeFunction function, @Optional IRecipeAction action) {
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, name, output, ingredients, function, action, true, false));
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapedRecipe(stage, name, output, new MCRecipeShaped(ingredients, output, function, action, true, false)));
     }
     
     @ZenMethod
@@ -450,6 +450,15 @@ public class Recipes {
         
         public ActionAddShapedRecipe(String stage, String name, IItemStack output, IIngredient[][] ingredients, IRecipeFunction function, IRecipeAction action, boolean mirrored, boolean hidden) {
             super(new RecipeStage(stage, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden), false, ingredients[0].length, ingredients.length), output, true, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden).hasTransformers());
+            setName(name);
+        }
+    
+        public ActionAddShapedRecipe(String stage, IItemStack output, MCRecipeShaped recipe) {
+            this(stage, null, output,recipe);
+        }
+    
+        public ActionAddShapedRecipe(String stage, String name, IItemStack output, MCRecipeShaped recipe) {
+            super(new RecipeStage(stage, recipe, false, recipe.getRecipeWidth(), recipe.getRecipeHeight()), output, true, recipe.hasTransformers());
             setName(name);
         }
     }
