@@ -52,7 +52,8 @@ public class ClientProxy extends CommonProxy {
                 for(IRecipe recipe : Recipes.recipes) {
                     if(recipe instanceof RecipeStage) {
                         RecipeStage rec = (RecipeStage) recipe;
-                        if(PlayerDataHandler.getStageData(player).hasUnlockedStage(rec.getTier())) {
+                        PlayerDataHandler.IStageData stageData = PlayerDataHandler.getStageData(player);
+                        if(stageData != null && stageData.hasUnlockedStage(rec.getTier())) {
                             IRecipeWrapper wrapper = reg.getRecipeWrapper(rec, guid);
                             reg.unhideRecipe(wrapper);
                         }
