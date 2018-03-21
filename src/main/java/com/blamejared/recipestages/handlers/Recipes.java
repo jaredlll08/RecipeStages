@@ -380,6 +380,10 @@ public class Recipes {
         setRecipeRegistryName(recipe, registryName);
         ForgeRegistries.RECIPES.register(recipe);
         Recipes.recipes.add(recipe);
+        
+        if (iRecipe instanceof MCRecipeBase) {
+            MCRecipeManager.recipesToAdd.removeIf(baseAddRecipe -> baseAddRecipe.getRecipe() == iRecipe);
+        }
     }
     
     private static void setRecipeRegistryName(IRecipe recipe, ResourceLocation registryName) {
