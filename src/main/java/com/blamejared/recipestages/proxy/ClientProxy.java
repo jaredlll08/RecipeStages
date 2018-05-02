@@ -38,7 +38,7 @@ public class ClientProxy extends CommonProxy {
         super.syncJEI(player);
         if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             if(recipeRegistry != null) {
-                if(GameStageHelper.getPlayerData(player) == null) {
+                if(player == null || GameStageHelper.getPlayerData(player) == null) {
                     return;
                 }
                 for(IRecipe recipe : Recipes.recipes) {
