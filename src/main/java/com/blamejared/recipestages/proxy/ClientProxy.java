@@ -5,8 +5,8 @@ import com.blamejared.recipestages.handlers.Recipes;
 import com.blamejared.recipestages.recipes.RecipeStage;
 import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.recipe.*;
-import net.darkhax.bookshelf.util.PlayerUtils;
-import net.darkhax.gamestages.capabilities.PlayerDataHandler;
+import net.darkhax.gamestages.GameStageHelper;
+import net.darkhax.gamestages.data.IStageData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.crafting.IRecipe;
@@ -38,7 +38,7 @@ public class ClientProxy extends CommonProxy {
         super.syncJEI(player);
         if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             if(recipeRegistry != null) {
-                if(PlayerDataHandler.getStageData(player) == null) {
+                if(GameStageHelper.getPlayerData(player) == null) {
                     return;
                 }
                 for(IRecipe recipe : Recipes.recipes) {
@@ -52,8 +52,8 @@ public class ClientProxy extends CommonProxy {
                 for(IRecipe recipe : Recipes.recipes) {
                     if(recipe instanceof RecipeStage) {
                         RecipeStage rec = (RecipeStage) recipe;
-                        PlayerDataHandler.IStageData stageData = PlayerDataHandler.getStageData(player);
-                        if(stageData != null && stageData.hasUnlockedStage(rec.getTier())) {
+                        IStageData stageData = GameStageHelper.getPlayerData(player);
+                        if(stageData != null && stageData.hasStage(rec.getTier())) {
                             IRecipeWrapper wrapper = reg.getRecipeWrapper(rec, guid);
                             reg.unhideRecipe(wrapper);
                         }
