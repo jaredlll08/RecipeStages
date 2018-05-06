@@ -2,7 +2,7 @@ package com.blamejared.recipestages.recipes;
 
 import com.blamejared.recipestages.RecipeStages;
 import com.blamejared.recipestages.handlers.Recipes;
-import net.darkhax.gamestages.capabilities.PlayerDataHandler;
+import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.entity.player.*;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
@@ -65,7 +65,7 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
             if(player == null || player instanceof FakePlayer) {
                 return true;
             }
-            return PlayerDataHandler.getStageData(player).hasUnlockedStage(tier);
+            return GameStageHelper.getPlayerData(player).hasStage(tier);
         } else {
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
             if(server != null) {
@@ -88,7 +88,7 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
                         }
                     }
                     if(foundPlayer != null) {
-                        return PlayerDataHandler.getStageData(foundPlayer).hasUnlockedStage(tier);
+                        return GameStageHelper.getPlayerData(foundPlayer).hasStage(tier);
                     }
                 }
             }
