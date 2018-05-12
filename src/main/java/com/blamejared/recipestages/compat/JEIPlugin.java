@@ -6,8 +6,9 @@ import com.blamejared.recipestages.recipes.RecipeStage;
 import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.recipe.*;
-import mezz.jei.recipes.RecipeRegistry;
 import net.minecraft.item.crafting.IRecipe;
+
+import java.util.List;
 
 @mezz.jei.api.JEIPlugin
 public class JEIPlugin implements IModPlugin {
@@ -30,10 +31,12 @@ public class JEIPlugin implements IModPlugin {
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         recipeRegistry = jeiRuntime.getRecipeRegistry();
-        for(IRecipe recipe : Recipes.recipes) {
-            IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
-            if (recipeWrapper != null) {
-                recipeRegistry.hideRecipe(recipeWrapper);
+        for(List<IRecipe> recipes : Recipes.recipes.values()) {
+            for(IRecipe recipe : recipes) {
+                IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
+                if(recipeWrapper != null) {
+                    recipeRegistry.hideRecipe(recipeWrapper);
+                }
             }
         }
     }

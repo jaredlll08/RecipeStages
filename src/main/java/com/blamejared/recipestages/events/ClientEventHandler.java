@@ -1,8 +1,7 @@
 package com.blamejared.recipestages.events;
 
 import com.blamejared.recipestages.RecipeStages;
-import net.darkhax.bookshelf.util.GameUtils;
-import net.darkhax.gamestages.event.*;
+import net.darkhax.gamestages.event.StagesSyncedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.*;
@@ -16,10 +15,7 @@ public class ClientEventHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onGamestageSync(StagesSyncedEvent event) {
-        
-        if(GameUtils.isClient()) {
-            RecipeStages.proxy.syncJEI(event.getEntityPlayer());
-        }
+        RecipeStages.proxy.syncJEI(event.getEntityPlayer());
     }
-
+    
 }

@@ -8,7 +8,6 @@ import crafttweaker.api.item.*;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.recipes.*;
 import crafttweaker.mc1120.recipes.*;
-import crafttweaker.mc1120.recipes.ShapedRecipeAdvanced;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import net.minecraft.item.crafting.IRecipe;
@@ -27,7 +26,7 @@ import java.util.regex.*;
 @ZenRegister
 public class Recipes {
     
-    public static List<IRecipe> recipes = new LinkedList<>();
+    public static Map<String, List<IRecipe>> recipes = new LinkedHashMap<>();
     public static ActionSetOutputStages actionSetOutputStages;
     public static ActionSetRegexStages actionSetRegexStages;
     public static ActionSetNameStages actionSetNameStages;
@@ -103,7 +102,7 @@ public class Recipes {
             CraftTweakerAPI.logError("Null not allowed in shapeless recipes! Recipe for: " + output + " not created!");
             return;
         }
-        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapelessRecipe( stage, name, output, ingredients, function, action, false));
+        RecipeStages.LATE_ADDITIONS.add(new ActionAddShapelessRecipe(stage, name, output, ingredients, function, action, false));
     }
     
     
@@ -379,9 +378,12 @@ public class Recipes {
         IRecipe recipe = new RecipeStage(stage, iRecipe, shapeless, width, height);
         setRecipeRegistryName(recipe, registryName);
         ForgeRegistries.RECIPES.register(recipe);
-        Recipes.recipes.add(recipe);
         
-        if (iRecipe instanceof MCRecipeBase) {
+        List<IRecipe> list = recipes.getOrDefault(stage, new LinkedList<>());
+        list.add(recipe);
+        recipes.put(stage, list);
+        
+        if(iRecipe instanceof MCRecipeBase) {
             MCRecipeManager.recipesToAdd.removeIf(baseAddRecipe -> baseAddRecipe.getRecipe() == iRecipe);
         }
     }
@@ -456,11 +458,11 @@ public class Recipes {
             super(new RecipeStage(stage, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden), false, ingredients[0].length, ingredients.length), output, true, new MCRecipeShaped(ingredients, output, function, action, mirrored, hidden).hasTransformers());
             setName(name);
         }
-    
+        
         public ActionAddShapedRecipe(String stage, IItemStack output, MCRecipeShaped recipe) {
-            this(stage, null, output,recipe);
+            this(stage, null, output, recipe);
         }
-    
+        
         public ActionAddShapedRecipe(String stage, String name, IItemStack output, MCRecipeShaped recipe) {
             super(new RecipeStage(stage, recipe, false, recipe.getRecipeWidth(), recipe.getRecipeHeight()), output, true, recipe.hasTransformers());
             setName(name);
@@ -538,7 +540,9 @@ public class Recipes {
         @Override
         public void apply() {
             ForgeRegistries.RECIPES.register(recipe.setRegistryName(new ResourceLocation("crafttweaker", name)));
-            recipes.add(recipe);
+            List<IRecipe> list = recipes.getOrDefault(recipe.getTier(), new LinkedList<>());
+            list.add(recipe);
+            recipes.put(recipe.getTier(), list);
         }
         
         @Override
