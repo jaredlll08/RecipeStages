@@ -7,6 +7,7 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.*;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.recipes.*;
+import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.mc1120.recipes.*;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
@@ -241,7 +242,7 @@ public class Recipes {
         public void apply() {
             List<IRecipe> values = new ArrayList<>(ForgeRegistries.RECIPES.getValues());
             for(IRecipe recipe : values) {
-                IItemStack stack = CraftTweakerMC.getIItemStack(recipe.getRecipeOutput());
+                IItemStack stack = MCItemStack.createNonCopy(recipe.getRecipeOutput());//CraftTweakerMC.getIItemStack(recipe.getRecipeOutput());
                 if(stack != null) {
                     for(Map.Entry<String, List<IItemStack>> entry : outputs.entrySet()) {
                         for(IItemStack output : entry.getValue()) {
