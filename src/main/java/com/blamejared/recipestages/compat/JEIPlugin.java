@@ -24,6 +24,21 @@ public class JEIPlugin implements IModPlugin {
     
     @Override
     public void register(IModRegistry registry) {
+        //        registry.addAdvancedGuiHandlers(new IAdvancedGuiHandler<GuiContainer>() {
+        //
+        //            @Nullable
+        //            @Override
+        //            public List<Rectangle> getGuiExtraAreas(GuiContainer guiContainer) {
+        //                List<Rectangle> rects = new ArrayList<>();
+        //                rects.add(new Rectangle(guiContainer.width-100,16,16,16));
+        //                return rects;
+        //            }
+        //
+        //            @Override
+        //            public Class<GuiContainer> getGuiContainerClass() {
+        //                return GuiContainer.class;
+        //            }
+        //        });
         ingredientRegistry = registry.getIngredientRegistry();
         registry.handleRecipes(RecipeStage.class, new StagedRecipeFactory(), VanillaRecipeCategoryUid.CRAFTING);
     }

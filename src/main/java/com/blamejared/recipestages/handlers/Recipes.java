@@ -11,6 +11,8 @@ import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.mc1120.recipes.*;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.IShapedRecipe;
@@ -387,6 +389,7 @@ public class Recipes {
         if(iRecipe instanceof MCRecipeBase) {
             MCRecipeManager.recipesToAdd.removeIf(baseAddRecipe -> baseAddRecipe.getRecipe() == iRecipe);
         }
+        CraftTweakerAPI.logInfo("Replacing recipe: " + iRecipe.getRecipeOutput() + " new recipe: " + recipe);
     }
     
     private static void setRecipeRegistryName(IRecipe recipe, ResourceLocation registryName) {

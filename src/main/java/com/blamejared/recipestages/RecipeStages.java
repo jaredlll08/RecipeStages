@@ -31,13 +31,7 @@ public class RecipeStages {
     
     @EventHandler
     public void onFMLPostInitialization(FMLPostInitializationEvent event) {
-        try {
-            LATE_REMOVALS.forEach(CraftTweakerAPI::apply);
-            LATE_ADDITIONS.forEach(CraftTweakerAPI::apply);
-        } catch(Exception e) {
-            e.printStackTrace();
-            CraftTweakerAPI.logError("Problems while loading " + MOD_NAME + " scripts!", e);
-        }
+    
     }
     
     @EventHandler
