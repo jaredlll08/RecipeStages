@@ -5,14 +5,11 @@ import com.blamejared.recipestages.recipes.RecipeStage;
 import crafttweaker.*;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.*;
-import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.recipes.*;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.mc1120.recipes.*;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.IShapedRecipe;
@@ -375,6 +372,9 @@ public class Recipes {
         if(iRecipe instanceof IShapedRecipe) {
             width = ((IShapedRecipe) iRecipe).getRecipeWidth();
             height = ((IShapedRecipe) iRecipe).getRecipeHeight();
+        } else if(iRecipe instanceof RecipeStage && !((RecipeStage) iRecipe).isShapeless()) {
+            width = ((RecipeStage) iRecipe).getWidth();
+            height = ((RecipeStage) iRecipe).getHeight();
         }
         
         boolean shapeless = (width == 0 && height == 0);
