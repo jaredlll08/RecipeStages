@@ -22,6 +22,10 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.client.config.HoverChecker;
 import net.minecraftforge.oredict.*;
 
+import java.util.*;
+
+import static com.blamejared.recipestages.compat.JEIPlugin.jeiHelpers;
+
 
 public class StagedRecipeWrapperShapeless extends ShapelessRecipeWrapper {
     
