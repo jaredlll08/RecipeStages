@@ -22,3 +22,6 @@
 usernamecache.json
 *.stackdump
 *.log
+changelog.md
+
+secrets.json
