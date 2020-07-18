@@ -2,29 +2,11 @@ package com.blamejared.recipestages.compat;
 
 import com.blamejared.recipestages.config.Configurations;
 import com.blamejared.recipestages.recipes.RecipeStage;
-import crafttweaker.api.recipes.*;
-import crafttweaker.mc1120.recipes.*;
 import mezz.jei.api.IJeiHelpers;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.*;
-import mezz.jei.api.recipe.wrapper.*;
-import mezz.jei.plugins.vanilla.crafting.*;
-import mezz.jei.recipes.BrokenCraftingRecipeException;
-import mezz.jei.util.ErrorUtil;
-import net.minecraft.block.BlockCommandBlock;
+import mezz.jei.plugins.vanilla.crafting.ShapelessRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.fml.client.config.HoverChecker;
-import net.minecraftforge.oredict.*;
-
-import java.util.*;
-
-import static com.blamejared.recipestages.compat.JEIPlugin.jeiHelpers;
 
 
 public class StagedRecipeWrapperShapeless extends ShapelessRecipeWrapper {

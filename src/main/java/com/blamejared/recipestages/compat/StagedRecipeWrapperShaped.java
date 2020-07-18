@@ -3,22 +3,14 @@ package com.blamejared.recipestages.compat;
 import com.blamejared.recipestages.config.Configurations;
 import com.blamejared.recipestages.recipes.RecipeStage;
 import mezz.jei.api.IJeiHelpers;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.*;
 import mezz.jei.api.recipe.wrapper.IShapedCraftingRecipeWrapper;
-import mezz.jei.plugins.vanilla.crafting.*;
-import mezz.jei.recipes.BrokenCraftingRecipeException;
-import mezz.jei.util.ErrorUtil;
+import mezz.jei.plugins.vanilla.crafting.ShapelessRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import java.util.*;
-
-import static com.blamejared.recipestages.compat.JEIPlugin.jeiHelpers;
+import java.util.Collections;
+import java.util.List;
 
 
 public class StagedRecipeWrapperShaped extends ShapelessRecipeWrapper<RecipeStage> implements IShapedCraftingRecipeWrapper {
