@@ -1,5 +1,6 @@
 package com.blamejared.recipestages.compat;
 
+import com.blamejared.recipestages.config.Configurations;
 import com.blamejared.recipestages.recipes.RecipeStage;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredients;
@@ -12,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.*;
@@ -47,7 +49,8 @@ public class StagedRecipeWrapperShaped extends ShapelessRecipeWrapper<RecipeStag
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
         ResourceLocation registryName = recipe.getRegistryName();
-        minecraft.fontRenderer.drawString("Stage: " + recipe.getTier(), 0, -11, 0);
+        if(Configurations.showStageName)
+            minecraft.fontRenderer.drawString(I18n.format("gui.rs.tip.stage", recipe.getTier()), 0, -11, 0);
     }
     
     public RecipeStage getRecipe() {

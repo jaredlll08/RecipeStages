@@ -1,5 +1,6 @@
 package com.blamejared.recipestages.compat;
 
+import com.blamejared.recipestages.config.Configurations;
 import com.blamejared.recipestages.recipes.RecipeStage;
 import crafttweaker.api.recipes.*;
 import crafttweaker.mc1120.recipes.*;
@@ -17,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.client.config.HoverChecker;
 import net.minecraftforge.oredict.*;
 
@@ -53,7 +55,8 @@ public class StagedRecipeWrapperShapeless extends ShapelessRecipeWrapper {
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
         ResourceLocation registryName = recipe.getRegistryName();
-        minecraft.fontRenderer.drawString("Stage: " + recipe.getTier(), 0, -11, 0);
+        if(Configurations.showStageName)
+            minecraft.fontRenderer.drawString(I18n.format("gui.rs.tip.stage", recipe.getTier()), 0, -11, 0);
     }
     
     public RecipeStage getRecipe() {
