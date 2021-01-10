@@ -1,48 +1,35 @@
 package com.blamejared.recipestages;
 
-import com.blamejared.recipestages.proxy.CommonProxy;
-import crafttweaker.*;
-import net.darkhax.bookshelf.util.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraftforge.fml.common.*;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.relauncher.*;
+import com.blamejared.recipestages.events.ClientEventHandler;
+import com.blamejared.recipestages.events.CommonEventHandler;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.util.*;
-
-import static com.blamejared.recipestages.reference.Reference.*;
-
-@Mod(modid = MOD_ID, name = MOD_NAME, version = VERSION, dependencies = "required-after:crafttweaker;after:gamestages@[2.0.90,)")
+@Mod("recipestages")
 public class RecipeStages {
     
-    
-    public static final List<IAction> LATE_ADDITIONS = new LinkedList<>();
-    public static final List<IAction> LATE_REMOVALS = new LinkedList<>();
-    
-    @SidedProxy(clientSide = "com.blamejared.recipestages.proxy.ClientProxy", serverSide = "com.blamejared.recipestages.proxy.CommonProxy")
-    public static CommonProxy proxy;
-    
-    @EventHandler
-    public void init(FMLInitializationEvent event) {
-        proxy.registerEvents();
+    public RecipeStages() {
+        
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        
     }
     
-    @EventHandler
-    public void onFMLPostInitialization(FMLPostInitializationEvent event) {
-    
+    private void setup(final FMLCommonSetupEvent event) {
+        MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
     }
     
-    @EventHandler
-    @SideOnly(Side.CLIENT)
-    public void onFMLLoadComplete(FMLLoadCompleteEvent event) {
-        // Add a resource reload listener to keep up to sync with JEI.
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(listener -> {
-            
-            if(Loader.isModLoaded("jei") && GameUtils.isClient()) {
-                proxy.syncJEI(PlayerUtils.getClientPlayer());
-            }
-        });
+    private void doClientStuff(final FMLClientSetupEvent event) {
+        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+    }
+    
+    @SubscribeEvent
+    public void onServerStarting(FMLServerStartingEvent event) {
+    
     }
 }

@@ -1,39 +1,45 @@
 package com.blamejared.recipestages.recipes;
 
-import com.blamejared.recipestages.RecipeStages;
-import com.blamejared.recipestages.handlers.Recipes;
+import net.darkhax.bookshelf.util.SidedExecutor;
 import net.darkhax.gamestages.GameStageHelper;
-import net.minecraft.entity.player.*;
-import net.minecraft.inventory.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
+import net.minecraft.item.crafting.ICraftingRecipe;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-import java.util.*;
-
-public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+public class RecipeStage implements ICraftingRecipe {
     
+    private final ResourceLocation id;
     private String tier;
-    private IRecipe recipe;
+    private IRecipe<CraftingInventory> recipe;
     
     private boolean shapeless;
     
     private int width, height;
     
-    public RecipeStage(String tier, IRecipe recipe, boolean shapeless) {
+    public RecipeStage(ResourceLocation id, String tier, IRecipe<CraftingInventory> recipe, boolean shapeless) {
+        this.id = id;
         this.tier = tier;
         this.recipe = recipe;
         this.shapeless = shapeless;
     }
     
-    public RecipeStage(String tier, IRecipe recipe, boolean shapeless, int width, int height) {
+    public RecipeStage(ResourceLocation id, String tier, IRecipe<CraftingInventory> recipe, boolean shapeless, int width, int height) {
+        this.id = id;
         this.tier = tier;
         this.recipe = recipe;
         this.shapeless = shapeless;
@@ -41,13 +47,14 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
         this.height = height;
     }
     
+    
     @Override
-    public boolean matches(InventoryCrafting inv, World worldIn) {
+    public boolean matches(CraftingInventory inv, World worldIn) {
         return recipe.matches(inv, worldIn);
     }
     
     @Override
-    public ItemStack getCraftingResult(InventoryCrafting inv) {
+    public ItemStack getCraftingResult(CraftingInventory inv) {
         if(isGoodForCrafting(inv)) {
             return recipe.getCraftingResult(inv);
         }
@@ -59,63 +66,60 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
         return recipe.canFit(width, height);
     }
     
-    public boolean isGoodForCrafting(InventoryCrafting inv) {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-            EntityPlayer player = RecipeStages.proxy.getClientPlayer();
+    public boolean isGoodForCrafting(CraftingInventory inv) {
+        return SidedExecutor.<Boolean> callForSide(() -> () -> {
+            PlayerEntity player = Minecraft.getInstance().player;
             if(player == null || player instanceof FakePlayer) {
                 return true;
             }
             return GameStageHelper.getPlayerData(player).hasStage(tier);
-        } else {
-            MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        }, () -> () -> {
+            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
             if(server != null) {
                 PlayerList manager = server.getPlayerList();
-                if(manager != null) {
-                    Container container = inv.eventHandler;
-                    if(container == null) {
-                        return false;
-                    }
-                    EntityPlayerMP foundPlayer = null;
-                    Iterator var6 = manager.getPlayers().iterator();
-                    while(var6.hasNext()) {
-                        EntityPlayerMP entityPlayerMP = (EntityPlayerMP) var6.next();
-                        if(entityPlayerMP.openContainer == container && container.canInteractWith(entityPlayerMP) && container.getCanCraft(entityPlayerMP)) {
-                            if(foundPlayer != null) {
-                                return false;
-                            }
-                            
-                            foundPlayer = entityPlayerMP;
+                Container container = inv.eventHandler;
+                if(container == null) {
+                    return false;
+                }
+                ServerPlayerEntity foundPlayer = null;
+                for(ServerPlayerEntity serverPlayerEntity : manager.getPlayers()) {
+                    ServerPlayerEntity entityPlayerMP = (ServerPlayerEntity) serverPlayerEntity;
+                    if(entityPlayerMP.openContainer == container && container.canInteractWith(entityPlayerMP) && container.getCanCraft(entityPlayerMP)) {
+                        if(foundPlayer != null) {
+                            return false;
                         }
-                    }
-                    if(foundPlayer != null) {
-                        return GameStageHelper.getPlayerData(foundPlayer).hasStage(tier);
-                    }
-                }
-            }
-            if(Recipes.printContainers)
-                System.out.println("Current container: " + inv.eventHandler.getClass().getName());
-            if(Recipes.crafterStages.getOrDefault(inv.eventHandler.getClass().getName(), new String[0]).length > 0) {
-                for(String s : Recipes.crafterStages.get(inv.eventHandler.getClass().getName())) {
-                    if(tier.equalsIgnoreCase(s)) {
-                        return true;
-                    }
-                }
-            }
-            for(Map.Entry<String, String[]> entry : Recipes.packageStages.entrySet()) {
-                String pack = entry.getKey().toLowerCase();
-                String[] stages = entry.getValue();
-                if(inv.eventHandler.getClass().getName().toLowerCase().startsWith(pack)){
-                    for(String s : stages) {
-                        if(tier.equalsIgnoreCase(s)) {
-                            return true;
-                        }
-                    }
-                }
                 
+                        foundPlayer = entityPlayerMP;
+                    }
+                }
+                if(foundPlayer != null) {
+                    return GameStageHelper.getPlayerData(foundPlayer).hasStage(tier);
+                }
             }
-            
+            //            if(Recipes.printContainers)
+            //                System.out.println("Current container: " + inv.eventHandler.getClass().getName());
+            //            if(Recipes.crafterStages.getOrDefault(inv.eventHandler.getClass().getName(), new String[0]).length > 0) {
+            //                for(String s : Recipes.crafterStages.get(inv.eventHandler.getClass().getName())) {
+            //                    if(tier.equalsIgnoreCase(s)) {
+            //                        return true;
+            //                    }
+            //                }
+            //            }
+            //            for(Map.Entry<String, String[]> entry : Recipes.packageStages.entrySet()) {
+            //                String pack = entry.getKey().toLowerCase();
+            //                String[] stages = entry.getValue();
+            //                if(inv.eventHandler.getClass().getName().toLowerCase().startsWith(pack)) {
+            //                    for(String s : stages) {
+            //                        if(tier.equalsIgnoreCase(s)) {
+            //                            return true;
+            //                        }
+            //                    }
+            //                }
+            //
+            //            }
+    
             return false;
-        }
+        });
     }
     
     @Override
@@ -124,16 +128,26 @@ public class RecipeStage extends IForgeRegistryEntry.Impl<IRecipe> implements IR
     }
     
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        return recipe.getRemainingItems(inv);
-    }
-    
-    @Override
     public NonNullList<Ingredient> getIngredients() {
         return recipe.getIngredients();
     }
     
-    public IRecipe getRecipe() {
+    @Override
+    public ResourceLocation getId() {
+        return id;
+    }
+    
+    @Override
+    public IRecipeSerializer<?> getSerializer() {
+        return null;
+    }
+    
+    @Override
+    public IRecipeType<?> getType() {
+        return recipe.getType();
+    }
+    
+    public IRecipe<CraftingInventory> getRecipe() {
         return recipe;
     }
     

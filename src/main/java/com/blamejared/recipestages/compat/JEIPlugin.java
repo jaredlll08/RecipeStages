@@ -1,58 +1,29 @@
 package com.blamejared.recipestages.compat;
 
 
-import com.blamejared.recipestages.handlers.Recipes;
 import com.blamejared.recipestages.recipes.RecipeStage;
-import mezz.jei.api.*;
-import mezz.jei.api.ingredients.IIngredientRegistry;
-import mezz.jei.api.recipe.*;
-import net.minecraft.item.crafting.IRecipe;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.VanillaRecipeCategoryUid;
+import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
+import mezz.jei.plugins.vanilla.crafting.CraftingRecipeCategory;
+import net.minecraft.util.ResourceLocation;
 
-import java.util.List;
-
-@mezz.jei.api.JEIPlugin
+@JeiPlugin
 public class JEIPlugin implements IModPlugin {
-    
-    public static IRecipeRegistry recipeRegistry;
-    public static IJeiHelpers jeiHelpers;
-    public static IIngredientRegistry ingredientRegistry;
-    
+
     @Override
-    public void registerCategories(IRecipeCategoryRegistration registry) {
-        jeiHelpers = registry.getJeiHelpers();
+    public ResourceLocation getPluginUid() {
+        return new ResourceLocation("recipestages:main");
     }
     
     @Override
-    public void register(IModRegistry registry) {
-        //        registry.addAdvancedGuiHandlers(new IAdvancedGuiHandler<GuiContainer>() {
-        //
-        //            @Nullable
-        //            @Override
-        //            public List<Rectangle> getGuiExtraAreas(GuiContainer guiContainer) {
-        //                List<Rectangle> rects = new ArrayList<>();
-        //                rects.add(new Rectangle(guiContainer.width-100,16,16,16));
-        //                return rects;
-        //            }
-        //
-        //            @Override
-        //            public Class<GuiContainer> getGuiContainerClass() {
-        //                return GuiContainer.class;
-        //            }
-        //        });
-        ingredientRegistry = registry.getIngredientRegistry();
-        registry.handleRecipes(RecipeStage.class, new StagedRecipeFactory(), VanillaRecipeCategoryUid.CRAFTING);
+    public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
+        registration.getCraftingCategory().addCategoryExtension(RecipeStage.class, StagedRecipeExtension::new);
+        System.out.println("Registered");
+        System.out.println(">>>");
     }
     
-    @Override
-    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
-        recipeRegistry = jeiRuntime.getRecipeRegistry();
-        for(List<IRecipe> recipes : Recipes.recipes.values()) {
-            for(IRecipe recipe : recipes) {
-                IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
-                if(recipeWrapper != null) {
-                    recipeRegistry.hideRecipe(recipeWrapper);
-                }
-            }
-        }
-    }
 }

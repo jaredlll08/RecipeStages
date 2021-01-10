@@ -28,20 +28,20 @@ pipeline {
             }
         }
 
-        stage('Publish') {
-            steps {
-                withCredentials([file(credentialsId: 'mod_build_secrets', variable: 'ORG_GRADLE_PROJECT_secretFile')]) {
-                    echo 'Updating version'
-                    sh './gradlew updateVersionTracker'
-
-                    echo 'Deploying to Maven'
-                    sh './gradlew publish'
-
-                    echo 'Deploying to CurseForge'
-                    sh './gradlew curseforge'
-                }
-            }
-        }
+//        stage('Publish') {
+//            steps {
+//                withCredentials([file(credentialsId: 'mod_build_secrets', variable: 'ORG_GRADLE_PROJECT_secretFile')]) {
+//                    echo 'Updating version'
+//                    sh './gradlew updateVersionTracker'
+//
+//                    echo 'Deploying to Maven'
+//                    sh './gradlew publish'
+//
+//                    echo 'Deploying to CurseForge'
+//                    sh './gradlew curseforge'
+//                }
+//            }
+//        }
     }
     post {
         always {
