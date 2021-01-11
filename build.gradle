@@ -107,7 +107,7 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor "com.blamejared.crafttweaker:Crafttweaker_Annotation_Processors-1.16.4:1.0.0.80"
+//    annotationProcessor "com.blamejared.crafttweaker:Crafttweaker_Annotation_Processors-1.16.4:1.0.0.80"
     minecraft 'net.minecraftforge:forge:1.16.4-35.1.36'
 
     compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.4:7.1.0.79")
