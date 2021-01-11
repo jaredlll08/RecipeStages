@@ -1,5 +1,7 @@
 package com.blamejared.recipestages.recipes;
 
+import com.blamejared.crafttweaker.api.CraftTweakerAPI;
+import com.blamejared.recipestages.RecipeStages;
 import net.darkhax.bookshelf.util.SidedExecutor;
 import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.client.Minecraft;
@@ -18,29 +20,37 @@ import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class RecipeStage implements ICraftingRecipe {
     
     private final ResourceLocation id;
-    private String tier;
+    private String stage;
     private IRecipe<CraftingInventory> recipe;
     
     private boolean shapeless;
     
     private int width, height;
     
-    public RecipeStage(ResourceLocation id, String tier, IRecipe<CraftingInventory> recipe, boolean shapeless) {
+    public RecipeStage(ResourceLocation id, String stage, IRecipe<CraftingInventory> recipe, boolean shapeless) {
         this.id = id;
-        this.tier = tier;
+        this.stage = stage;
         this.recipe = recipe;
         this.shapeless = shapeless;
+        if(recipe instanceof IShapedRecipe) {
+            this.width = ((IShapedRecipe<CraftingInventory>) recipe).getRecipeWidth();
+            this.height = ((IShapedRecipe<CraftingInventory>) recipe).getRecipeHeight();
+        }
     }
     
-    public RecipeStage(ResourceLocation id, String tier, IRecipe<CraftingInventory> recipe, boolean shapeless, int width, int height) {
+    public RecipeStage(ResourceLocation id, String stage, IRecipe<CraftingInventory> recipe, boolean shapeless, int width, int height) {
         this.id = id;
-        this.tier = tier;
+        this.stage = stage;
         this.recipe = recipe;
         this.shapeless = shapeless;
         this.width = width;
@@ -67,12 +77,15 @@ public class RecipeStage implements ICraftingRecipe {
     }
     
     public boolean isGoodForCrafting(CraftingInventory inv) {
+        if(RecipeStages.printContainers) {
+            CraftTweakerAPI.logInfo("Tried to craft a recipe in container: \"" + inv.eventHandler.getClass().getName() + "\"");
+        }
         return SidedExecutor.<Boolean> callForSide(() -> () -> {
             PlayerEntity player = Minecraft.getInstance().player;
             if(player == null || player instanceof FakePlayer) {
                 return true;
             }
-            return GameStageHelper.getPlayerData(player).hasStage(tier);
+            return GameStageHelper.getPlayerData(player).hasStage(stage);
         }, () -> () -> {
             MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
             if(server != null) {
@@ -88,36 +101,32 @@ public class RecipeStage implements ICraftingRecipe {
                         if(foundPlayer != null) {
                             return false;
                         }
-                
+                        
                         foundPlayer = entityPlayerMP;
                     }
                 }
                 if(foundPlayer != null) {
-                    return GameStageHelper.getPlayerData(foundPlayer).hasStage(tier);
+                    return GameStageHelper.getPlayerData(foundPlayer).hasStage(stage);
                 }
+                
+                Set<String> crafterStages = RecipeStages.containerStages.getOrDefault(inv.eventHandler.getClass().getName(), new HashSet<>());
+                if(crafterStages.isEmpty()) {
+                    return false;
+                }
+                if(crafterStages.contains(stage)) {
+                    return true;
+                }
+                
+                Set<String> packageStages = RecipeStages.packageStages.keySet().stream().filter(s -> inv.eventHandler.getClass().getName().startsWith(s)).map(RecipeStages.packageStages::get).reduce((strings, strings2) -> {
+                    strings.addAll(strings2);
+                    return strings;
+                }).orElse(new HashSet<>());
+                if(packageStages.isEmpty()) {
+                    return false;
+                }
+                return packageStages.contains(stage);
             }
-            //            if(Recipes.printContainers)
-            //                System.out.println("Current container: " + inv.eventHandler.getClass().getName());
-            //            if(Recipes.crafterStages.getOrDefault(inv.eventHandler.getClass().getName(), new String[0]).length > 0) {
-            //                for(String s : Recipes.crafterStages.get(inv.eventHandler.getClass().getName())) {
-            //                    if(tier.equalsIgnoreCase(s)) {
-            //                        return true;
-            //                    }
-            //                }
-            //            }
-            //            for(Map.Entry<String, String[]> entry : Recipes.packageStages.entrySet()) {
-            //                String pack = entry.getKey().toLowerCase();
-            //                String[] stages = entry.getValue();
-            //                if(inv.eventHandler.getClass().getName().toLowerCase().startsWith(pack)) {
-            //                    for(String s : stages) {
-            //                        if(tier.equalsIgnoreCase(s)) {
-            //                            return true;
-            //                        }
-            //                    }
-            //                }
-            //
-            //            }
-    
+            
             return false;
         });
     }
@@ -151,13 +160,13 @@ public class RecipeStage implements ICraftingRecipe {
         return recipe;
     }
     
-    public String getTier() {
-        return tier;
+    public String getStage() {
+        return stage;
     }
     
     @Override
     public String toString() {
-        return "RecipeStage{" + "tier='" + tier + '\'' + ", recipe=" + recipe.getRecipeOutput() + ":" + recipe.getIngredients() + '}';
+        return "RecipeStage{" + "stage='" + stage + '\'' + ", recipe=" + recipe.getRecipeOutput() + ":" + recipe.getIngredients() + '}';
     }
     
     public boolean isShapeless() {
