@@ -30,6 +30,7 @@ if (System.getenv('BUILD_NUMBER') != null) {
 group = "com.blamejared.recipestages"
 archivesBaseName = "RecipeStages"
 
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
     mappings channel: 'snapshot', version: '20201028-1.16.3'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
