@@ -42,6 +42,11 @@ public class RecipeStage implements ICraftingRecipe {
     
     
     @Override
+    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
+        return recipe.getRemainingItems(inv);
+    }
+    
+    @Override
     public boolean matches(CraftingInventory inv, World worldIn) {
         return recipe.matches(inv, worldIn);
     }
