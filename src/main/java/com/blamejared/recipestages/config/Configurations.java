@@ -9,4 +9,9 @@ public class Configurations {
     @Config.Name("Show stage name")
 
     public static boolean showStageName = true;
+
+    @Config.Comment("Toggle whether to display the item recipe in JEI.")
+    @Config.Name("Show item recipe")
+
+    public static boolean showRecipe = false;
 }

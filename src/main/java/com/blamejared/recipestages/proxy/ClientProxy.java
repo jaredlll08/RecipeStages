@@ -1,6 +1,7 @@
 package com.blamejared.recipestages.proxy;
 
 import com.blamejared.recipestages.events.ClientEventHandler;
+import com.blamejared.recipestages.config.Configurations;
 import com.blamejared.recipestages.handlers.Recipes;
 import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.recipe.*;
@@ -39,14 +40,16 @@ public class ClientProxy extends CommonProxy {
             if(player == null || GameStageHelper.getPlayerData(player) == null) {
                 return;
             }
-            Recipes.recipes.values().forEach(list -> {
-                for(IRecipe recipe : list) {
-                    IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
-                    if(recipeWrapper != null) {
-                        recipeRegistry.hideRecipe(recipeWrapper);
+            if (!Configurations.showRecipe) {
+                Recipes.recipes.values().forEach(list -> {
+                    for(IRecipe recipe : list) {
+                        IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
+                        if(recipeWrapper != null) {
+                            recipeRegistry.hideRecipe(recipeWrapper);
+                        }
                     }
-                }
-            });
+                });
+            }
             List<IRecipe> recipes = new ArrayList<>();
             
             String guid = VanillaRecipeCategoryUid.CRAFTING;
