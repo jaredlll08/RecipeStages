@@ -40,7 +40,7 @@ public class ClientProxy extends CommonProxy {
             if(player == null || GameStageHelper.getPlayerData(player) == null) {
                 return;
             }
-            if (Configurations.showRecipe == false) {
+            if (!Configurations.showRecipe) {
                 Recipes.recipes.values().forEach(list -> {
                     for(IRecipe recipe : list) {
                         IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
