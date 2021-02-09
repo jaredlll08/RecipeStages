@@ -40,14 +40,16 @@ public class ClientProxy extends CommonProxy {
             if(player == null || GameStageHelper.getPlayerData(player) == null) {
                 return;
             }
-            Recipes.recipes.values().forEach(list -> {
-                for(IRecipe recipe : list) {
-                    IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
-                    if(recipeWrapper != null && Configurations.showRecipe == false) {
-                        recipeRegistry.hideRecipe(recipeWrapper);
+            if (Configurations.showRecipe == false) {
+                Recipes.recipes.values().forEach(list -> {
+                    for(IRecipe recipe : list) {
+                        IRecipeWrapper recipeWrapper = recipeRegistry.getRecipeWrapper(recipe, VanillaRecipeCategoryUid.CRAFTING);
+                        if(recipeWrapper != null) {
+                            recipeRegistry.hideRecipe(recipeWrapper);
+                        }
                     }
-                }
-            });
+                });
+            }
             List<IRecipe> recipes = new ArrayList<>();
             
             String guid = VanillaRecipeCategoryUid.CRAFTING;
