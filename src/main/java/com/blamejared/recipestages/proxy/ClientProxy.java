@@ -55,7 +55,7 @@ public class ClientProxy extends CommonProxy {
             String guid = VanillaRecipeCategoryUid.CRAFTING;
             IRecipeRegistry reg = recipeRegistry;
             for(String key : Recipes.recipes.keySet()) {
-                if(GameStageHelper.clientHasStage(player, key)) {
+                if(GameStageHelper.clientHasStage(player, key) || Configurations.showRecipe == true) {
                     recipes.addAll(Recipes.recipes.get(key));
                 }
             }
