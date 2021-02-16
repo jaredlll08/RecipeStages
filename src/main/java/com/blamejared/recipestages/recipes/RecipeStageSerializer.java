@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.crafting.*;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.*;
 
@@ -13,8 +14,10 @@ public class RecipeStageSerializer extends ForgeRegistryEntry<IRecipeSerializer<
     }
     
     public RecipeStage read(ResourceLocation recipeId, JsonObject json) {
-        // TODO
-        return null;
+        String stage = JSONUtils.getString(json, "stage");
+        IRecipe<?> recipe = RecipeManager.deserializeRecipe(recipeId, JSONUtils.getJsonObject(json, "recipe"));
+        boolean shapeless = json.has("shapeless") ? JSONUtils.getBoolean(json, "shapeless") : (recipe instanceof ShapelessRecipe);
+        return new RecipeStage(recipeId, stage, (IRecipe<CraftingInventory>) recipe, shapeless);
     }
     
     public RecipeStage read(ResourceLocation recipeId, PacketBuffer buffer) {
