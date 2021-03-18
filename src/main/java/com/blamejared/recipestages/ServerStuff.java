@@ -35,19 +35,15 @@ public class ServerStuff {
             }
             
             Set<String> crafterStages = RecipeStages.containerStages.getOrDefault(inv.eventHandler.getClass().getName(), new HashSet<>());
-            if(crafterStages.isEmpty()) {
-                return false;
-            }
             if(crafterStages.contains(stage)) {
                 return true;
             }
             
-            Set<String> packageStages = RecipeStages.packageStages.keySet().stream().filter(s -> inv.eventHandler.getClass().getName().startsWith(s)).map(RecipeStages.packageStages::get).reduce((strings, strings2) -> {
-                strings.addAll(strings2);
-                return strings;
-            }).orElse(new HashSet<>());
-            if(packageStages.isEmpty()) {
-                return false;
+            Set<String> packageStages = new HashSet<>();
+            for(String s : RecipeStages.packageStages.keySet()) {
+                if(inv.eventHandler.getClass().getName().startsWith(s)){
+                    packageStages.addAll(RecipeStages.packageStages.get(s));
+                }
             }
             return packageStages.contains(stage);
         }

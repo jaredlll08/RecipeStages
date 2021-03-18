@@ -100,7 +100,7 @@ repositories {
         url "https://dvs1.progwml6.com/files/maven"
     }
     maven {
-        url 'https://mmdmaven.blamejared.com'
+        url 'http://maven.mcmoddev.com/'
     }
     maven {
         url 'https://repo.refinedmods.com/'
