@@ -27,3 +27,5 @@ forge*changelog.txt
 changelog.md
 
 logs/
+
+secrets.json

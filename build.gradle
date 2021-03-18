@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'com.diluv.schoomp', name: 'Schoomp', version: '1.1.0'
     }
 }
 plugins {
@@ -17,6 +18,11 @@ apply from: 'https://raw.githubusercontent.com/MinecraftModDevelopment/Gradle-Co
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
+
+
+import com.diluv.schoomp.Webhook
+import com.diluv.schoomp.message.Message
+import com.diluv.schoomp.message.embed.Embed
 import groovy.json.JsonOutput
 
 if (project.hasProperty('secretFile')) {
@@ -161,6 +167,34 @@ task genGitChangelog() {
     System.out.println("Changelog generated!")
 }
 
+def getCIChangelog() {
+    // This method handles getting short changelogs from Jenkins itself instead of long changelogs
+    String repoLink = "https://github.com/jaredlll08/RecipeStages/commit/"
+    try {
+        def stdout = new ByteArrayOutputStream()
+        def gitHash = System.getenv('GIT_COMMIT')
+        def gitPrevHash = System.getenv('GIT_PREVIOUS_COMMIT')
+        if(gitHash && gitPrevHash) {
+            exec {
+                commandLine 'git', 'log', '--pretty=tformat:- [%s](' + repoLink + '%H) - %aN ', '' + gitPrevHash + '...' + gitHash
+                standardOutput = stdout
+            }
+            return stdout.toString().trim()
+        }
+        else if (gitHash) {
+            exec {
+                commandLine 'git', 'log', '--pretty=tformat:- [%s](' + repoLink + '%H) - %aN', '-1', '' + gitHash
+                standardOutput = stdout
+            }
+            return stdout.toString().trim()
+        } else {
+            return "";
+        }
+    } catch(ignored) {
+        return "";
+    }
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     description = 'Creates a JAR containing the source code.'
     from sourceSets.main.allSource
@@ -245,6 +279,37 @@ curseforge {
     }
 }
 
+tasks.getByName("curseforge").doLast {
+
+    try {
+        def name = project.findProperty('name')
+        def mcVersion = "1.16.5"
+        def cursePage = "https://www.curseforge.com/minecraft/mc-mods/recipe-stages"
+        def curseProject = "280554"
+        // Reads the file ID given to us by CurseForge
+        def newFileId = tasks.getByName("curseforge${curseProject}").property('mainArtifact').fileID
+
+        def webhook = new Webhook(findProperty('discordCFWebhook'), "${name} Gradle Upload")
+
+        def message = new Message()
+        message.setUsername(name)
+        message.setContent("${name} ${version} for Minecraft ${mcVersion} has been released! The download will be available soon.")
+
+        def embed = new Embed()
+        embed.addField('Download', "${cursePage}/files/$newFileId", false)
+        embed.addField('Change Log', "${getCIChangelog() ?: 'Unavailable'}", false)
+
+        embed.setColor(0xF16436)
+        message.addEmbed(embed)
+        message.setAvatarUrl("https://media.forgecdn.net/avatars/128/69/636444415480522123.png")
+        webhook.sendMessage(message)
+    }
+
+    catch (IOException e) {
+        println 'Failed to push to the Discord webhook.'
+    }
+}
+
 task updateVersionTracker {
 
     onlyIf {
@@ -276,3 +341,4 @@ task updateVersionTracker {
     }
 
 }
+
