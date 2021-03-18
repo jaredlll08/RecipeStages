@@ -11,9 +11,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ActionClearStageByOutput extends ActionClearBase {
     
@@ -27,7 +25,7 @@ public class ActionClearStageByOutput extends ActionClearBase {
     public void apply() {
         List<Map.Entry<ResourceLocation, IRecipe<?>>> toChange = new ArrayList<>();
         for(Map.Entry<ResourceLocation, IRecipe<?>> entry : this.getManager().getRecipes().entrySet()) {
-            ItemStack stack = entry.getValue().getRecipeOutput();
+            ItemStack stack = entry.getValue().getResultItem();
             if(this.output.matches(new MCItemStackMutable(stack))) {
                 toChange.add(entry);
             }

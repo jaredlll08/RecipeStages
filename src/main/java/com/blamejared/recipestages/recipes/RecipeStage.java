@@ -52,29 +52,31 @@ public class RecipeStage implements ICraftingRecipe {
     }
     
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         if(isGoodForCrafting(inv)) {
-            return recipe.getCraftingResult(inv);
+            return recipe.assemble(inv);
         }
         return ItemStack.EMPTY;
     }
     
     @Override
-    public boolean canFit(int width, int height) {
-        return recipe.canFit(width, height);
+    public boolean canCraftInDimensions(int p_194133_1_, int p_194133_2_) {
+        return recipe.canCraftInDimensions(p_194133_1_, p_194133_2_);
     }
+    
+    @Override
+    public ItemStack getResultItem() {
+        return recipe.getResultItem();
+    }
+    
     
     public boolean isGoodForCrafting(CraftingInventory inv) {
         if(RecipeStages.printContainers) {
-            CraftTweakerAPI.logInfo("Tried to craft a recipe in container: \"" + inv.eventHandler.getClass().getName() + "\"");
+            CraftTweakerAPI.logInfo("Tried to craft a recipe in container: \"" + inv.menu.getClass().getName() + "\"");
         }
         return SidedExecutor.<Boolean> callForSide(() -> () -> ClientStuff.handleClient(stage), () -> () -> ServerStuff.handleServer(inv, stage));
     }
     
-    @Override
-    public ItemStack getRecipeOutput() {
-        return recipe.getRecipeOutput();
-    }
     
     @Override
     public NonNullList<Ingredient> getIngredients() {
@@ -106,7 +108,7 @@ public class RecipeStage implements ICraftingRecipe {
     
     @Override
     public String toString() {
-        return "RecipeStage{" + "stage='" + stage + '\'' + ", recipe=" + recipe.getRecipeOutput() + ":" + recipe.getIngredients() + '}';
+        return "RecipeStage{" + "stage='" + stage + '\'' + ", recipe=" + recipe.getResultItem() + ":" + recipe.getIngredients() + '}';
     }
     
     public boolean isShapeless() {

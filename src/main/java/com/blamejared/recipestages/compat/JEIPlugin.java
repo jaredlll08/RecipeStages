@@ -3,8 +3,7 @@ package com.blamejared.recipestages.compat;
 
 import com.blamejared.crafttweaker.impl.managers.CTCraftingTableManager;
 import com.blamejared.recipestages.recipes.RecipeStage;
-import mezz.jei.api.IModPlugin;
-import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.*;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -35,7 +34,7 @@ public class JEIPlugin implements IModPlugin {
     }
     
     public static void sync(IStageData data) {
-        CTCraftingTableManager.recipeManager.getRecipesForType(IRecipeType.CRAFTING).stream().filter(iCraftingRecipe -> iCraftingRecipe instanceof RecipeStage).map(iCraftingRecipe -> (RecipeStage) iCraftingRecipe).forEach(recipeStage -> {
+        CTCraftingTableManager.recipeManager.getAllRecipesFor(IRecipeType.CRAFTING).stream().filter(iCraftingRecipe -> iCraftingRecipe instanceof RecipeStage).map(iCraftingRecipe -> (RecipeStage) iCraftingRecipe).forEach(recipeStage -> {
             if(data.hasStage(recipeStage.getStage())) {
                 JEIPlugin.runTime.getRecipeManager().unhideRecipe(recipeStage, VanillaRecipeCategoryUid.CRAFTING);
             } else {

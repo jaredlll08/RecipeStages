@@ -38,7 +38,7 @@ archivesBaseName = "RecipeStages"
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'snapshot', version: '20201028-1.16.3'
+    mappings channel: 'official', version: '1.16.5'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -115,7 +115,7 @@ repositories {
 
 dependencies {
 //    annotationProcessor "com.blamejared.crafttweaker:Crafttweaker_Annotation_Processors-1.16.4:1.0.0.80"
-    minecraft 'net.minecraftforge:forge:1.16.4-35.1.36'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.1.1'
 
     compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.5:7.1.0.90")
 
@@ -321,7 +321,7 @@ task updateVersionTracker {
         def body = [
                 'author'        : "${project.findProperty('versionTrackerAuthor')}",
                 'projectName'   : "RecipeStages",
-                'gameVersion'   : "1.16.4",
+                'gameVersion'   : "1.16.5",
                 'projectVersion': "${version}",
                 'homepage'      : "${project.findProperty('versionTrackerHomepage')}",
                 'uid'           : "${project.findProperty('versionTrackerKey')}"

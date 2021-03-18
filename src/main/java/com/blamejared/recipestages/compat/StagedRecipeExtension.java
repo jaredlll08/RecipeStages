@@ -25,7 +25,7 @@ public class StagedRecipeExtension implements ICustomCraftingCategoryExtension {
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, IIngredients ingredients) {
         ingredients.setInputIngredients(recipe.getIngredients());
-        ingredients.setOutput(VanillaTypes.ITEM, recipe.getRecipeOutput());
+        ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
         
         List<List<ItemStack>> inputs = ingredients.getInputs(VanillaTypes.ITEM);
         List<List<ItemStack>> outputs = ingredients.getOutputs(VanillaTypes.ITEM);
@@ -45,13 +45,13 @@ public class StagedRecipeExtension implements ICustomCraftingCategoryExtension {
     @Override
     public void setIngredients(IIngredients ingredients) {
         ingredients.setInputIngredients(recipe.getIngredients());
-        ingredients.setOutput(VanillaTypes.ITEM, recipe.getRecipeOutput());
+        ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
     }
     
     @Override
     public void drawInfo(int recipeWidth, int recipeHeight, MatrixStack matrixStack, double mouseX, double mouseY) {
         if(RecipeStages.showJEILabel)
-            Minecraft.getInstance().fontRenderer.drawString(matrixStack, I18n.format("gui.rs.tip.stage", recipe.getStage()), 0, -11, 0x00000000);
+            Minecraft.getInstance().font.draw(matrixStack, I18n.get("gui.rs.tip.stage", recipe.getStage()), 0, -11, 0x00000000);
     }
     
     

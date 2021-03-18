@@ -11,18 +11,19 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import java.util.*;
 
 public class ServerStuff {
-    public static boolean handleServer(CraftingInventory inv, String stage){
+    
+    public static boolean handleServer(CraftingInventory inv, String stage) {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if(server != null) {
             PlayerList manager = server.getPlayerList();
-            Container container = inv.eventHandler;
+            Container container = inv.menu;
             if(container == null) {
                 return false;
             }
             ServerPlayerEntity foundPlayer = null;
             for(ServerPlayerEntity serverPlayerEntity : manager.getPlayers()) {
                 ServerPlayerEntity entityPlayerMP = (ServerPlayerEntity) serverPlayerEntity;
-                if(entityPlayerMP.openContainer == container && container.canInteractWith(entityPlayerMP) && container.getCanCraft(entityPlayerMP)) {
+                if(entityPlayerMP.containerMenu == container && container.stillValid(entityPlayerMP) && container.isSynched(entityPlayerMP)) {
                     if(foundPlayer != null) {
                         return false;
                     }
@@ -34,14 +35,14 @@ public class ServerStuff {
                 return GameStageHelper.getPlayerData(foundPlayer).hasStage(stage);
             }
             
-            Set<String> crafterStages = RecipeStages.containerStages.getOrDefault(inv.eventHandler.getClass().getName(), new HashSet<>());
+            Set<String> crafterStages = RecipeStages.containerStages.getOrDefault(inv.menu.getClass().getName(), new HashSet<>());
             if(crafterStages.contains(stage)) {
                 return true;
             }
             
             Set<String> packageStages = new HashSet<>();
             for(String s : RecipeStages.packageStages.keySet()) {
-                if(inv.eventHandler.getClass().getName().startsWith(s)){
+                if(inv.menu.getClass().getName().startsWith(s)) {
                     packageStages.addAll(RecipeStages.packageStages.get(s));
                 }
             }

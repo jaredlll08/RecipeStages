@@ -8,8 +8,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class ActionStageBase extends ActionRecipeBase {
     

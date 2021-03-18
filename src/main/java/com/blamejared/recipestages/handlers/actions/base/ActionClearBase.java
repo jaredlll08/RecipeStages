@@ -6,8 +6,7 @@ import com.blamejared.recipestages.recipes.RecipeStage;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class ActionClearBase extends ActionRecipeBase {
     
