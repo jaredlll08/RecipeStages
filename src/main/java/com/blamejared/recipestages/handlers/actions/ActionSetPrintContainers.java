@@ -9,31 +9,38 @@ public class ActionSetPrintContainers implements IUndoableAction {
     private final boolean value;
     
     public ActionSetPrintContainers(boolean value) {
+        
         this.value = value;
     }
     
     @Override
     public void undo() {
-        RecipeStages.printContainers = !value;
+        
+        RecipeStages.printContainer = !value;
     }
     
     @Override
     public String describeUndo() {
+        
         return "Set printing container names to " + !value;
     }
     
     @Override
     public void apply() {
-        RecipeStages.printContainers = value;
+        
+        RecipeStages.printContainer = value;
     }
     
     @Override
     public String describe() {
+        
         return "Set printing container names to " + value;
     }
     
     @Override
     public boolean shouldApplyOn(LogicalSide side) {
+        
         return true;
     }
+    
 }

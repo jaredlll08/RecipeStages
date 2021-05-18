@@ -13,14 +13,15 @@ import net.minecraftforge.common.crafting.IShapedRecipe;
 public class RecipeStage implements ICraftingRecipe {
     
     private final ResourceLocation id;
-    private String stage;
-    private IRecipe<CraftingInventory> recipe;
+    private final String stage;
+    private final IRecipe<CraftingInventory> recipe;
     
-    private boolean shapeless;
+    private final boolean shapeless;
     
     private int width, height;
     
     public RecipeStage(ResourceLocation id, String stage, IRecipe<CraftingInventory> recipe, boolean shapeless) {
+        
         this.id = id;
         this.stage = stage;
         this.recipe = recipe;
@@ -32,6 +33,7 @@ public class RecipeStage implements ICraftingRecipe {
     }
     
     public RecipeStage(ResourceLocation id, String stage, IRecipe<CraftingInventory> recipe, boolean shapeless, int width, int height) {
+        
         this.id = id;
         this.stage = stage;
         this.recipe = recipe;
@@ -43,16 +45,19 @@ public class RecipeStage implements ICraftingRecipe {
     
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
+        
         return recipe.getRemainingItems(inv);
     }
     
     @Override
     public boolean matches(CraftingInventory inv, World worldIn) {
+        
         return recipe.matches(inv, worldIn);
     }
     
     @Override
     public ItemStack assemble(CraftingInventory inv) {
+        
         if(isGoodForCrafting(inv)) {
             return recipe.assemble(inv);
         }
@@ -61,65 +66,91 @@ public class RecipeStage implements ICraftingRecipe {
     
     @Override
     public boolean canCraftInDimensions(int p_194133_1_, int p_194133_2_) {
+        
         return recipe.canCraftInDimensions(p_194133_1_, p_194133_2_);
     }
     
     @Override
     public ItemStack getResultItem() {
+        
         return recipe.getResultItem();
     }
     
     
     public boolean isGoodForCrafting(CraftingInventory inv) {
-        if(RecipeStages.printContainers) {
-            CraftTweakerAPI.logInfo("Tried to craft a recipe in container: \"" + inv.menu.getClass().getName() + "\"");
+        
+        // We do this check in ServerStuff later down the line,
+        // which leads to a de-sync issue with the item showing on the client.
+        if(inv.menu == null) {
+            CraftTweakerAPI.logError("Cannot craft staged recipes in inventory: `%s` as we have no access to a player or a container! Please report this to RecipeStages and the offending mod!", inv);
+            return false;
         }
-        return SidedExecutor.<Boolean> callForSide(() -> () -> ClientStuff.handleClient(stage), () -> () -> ServerStuff.handleServer(inv, stage));
+        if(RecipeStages.printContainer) {
+            CraftTweakerAPI.logInfo("Tried to craft a recipe in container: `%s`", inv.menu.getClass().getName());
+        }
+        
+        return SidedExecutor.<Boolean> callForSide(
+                () -> () -> ClientStuff.handleClient(stage),
+                () -> () -> ServerStuff.handleServer(inv, stage));
     }
     
     
     @Override
     public NonNullList<Ingredient> getIngredients() {
+        
         return recipe.getIngredients();
     }
     
     @Override
     public ResourceLocation getId() {
+        
         return id;
     }
     
     @Override
     public IRecipeSerializer<?> getSerializer() {
+        
         return RecipeStages.STAGE_SERIALIZER;
     }
     
     @Override
     public IRecipeType<?> getType() {
+        
         return recipe.getType();
     }
     
     public IRecipe<CraftingInventory> getRecipe() {
+        
         return recipe;
     }
     
     public String getStage() {
+        
         return stage;
     }
     
+    
     @Override
     public String toString() {
-        return "RecipeStage{" + "stage='" + stage + '\'' + ", recipe=" + recipe.getResultItem() + ":" + recipe.getIngredients() + '}';
+        
+        return "RecipeStage{" + "stage='" + stage + '\'' +
+                ", recipe=" + recipe.getResultItem() + ":" + recipe.getIngredients() +
+                '}';
     }
     
     public boolean isShapeless() {
+        
         return shapeless;
     }
     
     public int getWidth() {
+        
         return width;
     }
     
     public int getHeight() {
+        
         return height;
     }
+    
 }

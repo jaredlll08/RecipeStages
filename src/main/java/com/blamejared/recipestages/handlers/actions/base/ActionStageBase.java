@@ -8,18 +8,21 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 public abstract class ActionStageBase extends ActionRecipeBase {
     
     protected final String stage;
     
     public ActionStageBase(IRecipeManager manager, String stage) {
+        
         super(manager);
         this.stage = stage;
     }
     
     protected void stageRecipes(List<Map.Entry<ResourceLocation, IRecipe<?>>> toChange) {
+        
         for(Map.Entry<ResourceLocation, IRecipe<?>> entry : toChange) {
             String key = entry.getKey().toString();
             IRecipe<?> recipe = entry.getValue();

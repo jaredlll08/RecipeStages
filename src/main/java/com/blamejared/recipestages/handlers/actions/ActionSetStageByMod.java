@@ -15,11 +15,13 @@ public class ActionSetStageByMod extends ActionStageBase {
     private final String modid;
     
     public ActionSetStageByMod(IRecipeManager manager, String stage, String modid) {
+        
         super(manager, stage);
         this.modid = modid;
     }
     
     public void apply() {
+        
         List<Map.Entry<ResourceLocation, IRecipe<?>>> toChange = new ArrayList<>();
         for(Map.Entry<ResourceLocation, IRecipe<?>> entry : this.getManager().getRecipes().entrySet()) {
             if(entry.getKey().getNamespace().equals(modid)) {
@@ -41,6 +43,9 @@ public class ActionSetStageByMod extends ActionStageBase {
     
     @Override
     public String describe() {
-        return "Setting the stage of  \"" + Registry.RECIPE_TYPE.getKey(this.getManager().getRecipeType()) + "\" recipes with modid: " + this.modid + "\" to \"" + stage + "\"";
+        
+        return "Setting the stage of  \"" + Registry.RECIPE_TYPE.getKey(this.getManager()
+                .getRecipeType()) + "\" recipes with modid: " + this.modid + "\" to \"" + stage + "\"";
     }
+    
 }

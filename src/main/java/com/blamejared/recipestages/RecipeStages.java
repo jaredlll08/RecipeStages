@@ -9,7 +9,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Mod("recipestages")
 public class RecipeStages {
@@ -19,17 +21,20 @@ public class RecipeStages {
         recipeStageSerializer.setRegistryName("recipestages", "stage");
         return recipeStageSerializer;
     });
-    public static boolean printContainers = false;
+    public static final Map<String, Set<String>> PACKAGE_STAGES = new HashMap<>();
+    public static final Map<String, Set<String>> CONTAINER_STAGES = new HashMap<>();
+    
+    public static boolean printContainer = false;
     public static boolean showJEILabel = true;
-    public static final Map<String, Set<String>> packageStages = new HashMap<>();
-    public static final Map<String, Set<String>> containerStages = new HashMap<>();
     
     public RecipeStages() {
+        
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         ForgeRegistries.RECIPE_SERIALIZERS.register(STAGE_SERIALIZER);
     }
     
     private void doClientStuff(final FMLClientSetupEvent event) {
+        
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
     }
     

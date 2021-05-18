@@ -19,11 +19,13 @@ public class StagedRecipeExtension implements ICustomCraftingCategoryExtension {
     private final RecipeStage recipe;
     
     public StagedRecipeExtension(RecipeStage recipeStage) {
+        
         this.recipe = recipeStage;
     }
     
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, IIngredients ingredients) {
+        
         ingredients.setInputIngredients(recipe.getIngredients());
         ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
         
@@ -44,18 +46,22 @@ public class StagedRecipeExtension implements ICustomCraftingCategoryExtension {
     
     @Override
     public void setIngredients(IIngredients ingredients) {
+        
         ingredients.setInputIngredients(recipe.getIngredients());
         ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
     }
     
     @Override
     public void drawInfo(int recipeWidth, int recipeHeight, MatrixStack matrixStack, double mouseX, double mouseY) {
-        if(RecipeStages.showJEILabel)
+        
+        if(RecipeStages.showJEILabel) {
             Minecraft.getInstance().font.draw(matrixStack, I18n.get("gui.rs.tip.stage", recipe.getStage()), 0, -11, 0x00000000);
+        }
     }
     
     
     public <T> void setInputs(IGuiIngredientGroup<T> ingredientGroup, List<List<T>> inputs, int width, int height) {
+        
         for(int i = 0; i < inputs.size(); i++) {
             List<T> recipeItem = inputs.get(i);
             int index = getCraftingIndex(i, width, height);
@@ -65,10 +71,12 @@ public class StagedRecipeExtension implements ICustomCraftingCategoryExtension {
     }
     
     private <T> void setInput(IGuiIngredientGroup<T> guiIngredients, int inputIndex, List<T> input) {
+        
         guiIngredients.set(1 + inputIndex, input);
     }
     
     private int getCraftingIndex(int i, int width, int height) {
+        
         int index;
         if(width == 1) {
             if(height == 3) {
@@ -95,4 +103,5 @@ public class StagedRecipeExtension implements ICustomCraftingCategoryExtension {
         }
         return index;
     }
+    
 }

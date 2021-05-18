@@ -12,10 +12,12 @@ import javax.annotation.Nullable;
 public class RecipeStageSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<RecipeStage> {
     
     public RecipeStageSerializer() {
+    
     }
     
     @Override
     public RecipeStage fromJson(ResourceLocation recipeId, JsonObject json) {
+        
         String stage = JSONUtils.getAsString(json, "stage");
         IRecipe<?> recipe = RecipeManager.fromJson(recipeId, JSONUtils.getAsJsonObject(json, "recipe"));
         
@@ -30,6 +32,7 @@ public class RecipeStageSerializer extends ForgeRegistryEntry<IRecipeSerializer<
     @Nullable
     @Override
     public RecipeStage fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+        
         ResourceLocation innerRecipeId = buffer.readResourceLocation();
         ResourceLocation recipeSerializerId = buffer.readResourceLocation();
         IRecipeSerializer<?> value = ForgeRegistries.RECIPE_SERIALIZERS.getValue(recipeSerializerId);
@@ -42,6 +45,7 @@ public class RecipeStageSerializer extends ForgeRegistryEntry<IRecipeSerializer<
     
     @Override
     public void toNetwork(PacketBuffer buffer, RecipeStage recipe) {
+        
         IRecipe recipe1 = recipe.getRecipe();
         buffer.writeResourceLocation(recipe1.getId());
         buffer.writeResourceLocation(recipe1.getSerializer().getRegistryName());
@@ -49,4 +53,5 @@ public class RecipeStageSerializer extends ForgeRegistryEntry<IRecipeSerializer<
         buffer.writeUtf(recipe.getStage());
         buffer.writeBoolean(recipe.isShapeless());
     }
+    
 }

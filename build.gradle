@@ -1,42 +1,27 @@
 buildscript {
     repositories {
+        maven { url = 'https://maven.blamejared.com' }
         maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath group: 'com.diluv.schoomp', name: 'Schoomp', version: '1.1.0'
+        classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.4.0"
+        classpath group: 'com.blamejared', name: 'ModTemplate', version: '1.+', changing: true
     }
 }
-plugins {
-    id "com.matthewprenger.cursegradle" version "1.4.0"
-}
+apply plugin: 'com.blamejared.modtemplate'
+apply plugin: "com.matthewprenger.cursegradle"
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
-apply from: 'https://raw.githubusercontent.com/MinecraftModDevelopment/Gradle-Collection/22e7d543a18cd30675277fbfa3669e3d9e206010/generic/secrets.gradle'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
-
-
-import com.diluv.schoomp.Webhook
-import com.diluv.schoomp.message.Message
-import com.diluv.schoomp.message.embed.Embed
-import groovy.json.JsonOutput
-
-if (project.hasProperty('secretFile')) {
-    loadSecrets(new File((String) findProperty('secretFile')))
-}
-
 version = '2.0.0'
-if (System.getenv('BUILD_NUMBER') != null) {
-    version += "." + System.getenv('BUILD_NUMBER')
-}
 group = "com.blamejared.recipestages"
 archivesBaseName = "RecipeStages"
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
     mappings channel: 'official', version: '1.16.5'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -45,14 +30,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
             mods {
-                examplemod {
+                recipestages {
                     source sourceSets.main
                 }
             }
@@ -61,14 +40,8 @@ minecraft {
         server {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
             mods {
-                examplemod {
+                recipestages {
                     source sourceSets.main
                 }
             }
@@ -77,17 +50,10 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', 'recipestages', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                examplemod {
+                recipestages {
                     source sourceSets.main
                 }
             }
@@ -95,18 +61,38 @@ minecraft {
     }
 }
 
+modTemplate {
+    mcVersion "1.16.5"
+    curseHomepage "https://www.curseforge.com/minecraft/mc-mods/recipe-stages"
+    displayName "RecipeStages"
+
+    changelog {
+        enabled true
+        firstCommit "54fc92db82bd6ca67076ec9b57bc518d86daed53"
+        repo "https://github.com/jaredlll08/RecipeStages"
+    }
+    versionTracker {
+        enabled true
+        projectName "RecipeStages"
+        author "Jared"
+    }
+    webhook {
+        enabled true
+        curseId "280554"
+        avatarUrl "https://media.forgecdn.net/avatars/128/69/636444415480522123.png"
+    }
+}
 
 repositories {
     mavenCentral()
     maven {
-
         url 'https://maven.blamejared.com'
     }
     maven {
         url "https://dvs1.progwml6.com/files/maven"
     }
     maven {
-        url 'http://maven.mcmoddev.com/'
+        url 'https://maven.mcmoddev.com/'
     }
     maven {
         url 'https://repo.refinedmods.com/'
@@ -114,7 +100,6 @@ repositories {
 }
 
 dependencies {
-//    annotationProcessor "com.blamejared.crafttweaker:Crafttweaker_Annotation_Processors-1.16.4:1.0.0.80"
     minecraft 'net.minecraftforge:forge:1.16.5-36.1.1'
 
     compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.5:7.1.0.90")
@@ -123,7 +108,6 @@ dependencies {
     compile fg.deobf("net.darkhax.bookshelf:Bookshelf-1.16.4:9.3.18")
     compile fg.deobf("mezz.jei:jei-1.16.4:7.6.1.65")
     compile fg.deobf("com.refinedmods:refinedstorage:1.9.12+151")
-
 }
 
 jar {
@@ -131,7 +115,7 @@ jar {
         attributes([
                 "Specification-Title"     : "recipestages",
                 "Specification-Vendor"    : "BlameJared",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Specification-Version"   : "1",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
                 "Implementation-Vendor"   : "BlameJared",
@@ -140,60 +124,6 @@ jar {
     }
 }
 jar.finalizedBy('reobfJar')
-
-
-task genGitChangelog() {
-    def stdout = new ByteArrayOutputStream()
-    // first commit to check from, in our case the first commit of the branch
-    String firstCommit = "54fc92db82bd6ca67076ec9b57bc518d86daed53";
-    String repoLink = "https://github.com/jaredlll08/RecipeStages/commit/"
-    // was having issues with grep and spaces in the regex
-    exec {
-        commandLine 'git', 'log', '-i', '--grep=version\\spush', '--pretty=tformat:%H', '--date=local', firstCommit + '..@{0}'
-        standardOutput = stdout
-    }
-    if (stdout.toString().trim().indexOf("\n") >= 0) {
-        firstCommit = stdout.toString().split("\n")[0].trim();
-    }
-    System.out.println("Last version hash: \"" + firstCommit + "\"");
-    stdout = new ByteArrayOutputStream()
-    def test = exec {
-        commandLine 'git', 'log', '--pretty=tformat:- [%s](' + repoLink + '%H) - %aN - %cd', '--max-parents=1', '--date=local', firstCommit + "..@"
-        standardOutput = stdout
-    }
-    File file = new File("changelog.md")
-    file.write("### Current version: " + project.version)
-    file.append("\n" + stdout.toString())
-    System.out.println("Changelog generated!")
-}
-
-def getCIChangelog() {
-    // This method handles getting short changelogs from Jenkins itself instead of long changelogs
-    String repoLink = "https://github.com/jaredlll08/RecipeStages/commit/"
-    try {
-        def stdout = new ByteArrayOutputStream()
-        def gitHash = System.getenv('GIT_COMMIT')
-        def gitPrevHash = System.getenv('GIT_PREVIOUS_COMMIT')
-        if(gitHash && gitPrevHash) {
-            exec {
-                commandLine 'git', 'log', '--pretty=tformat:- [%s](' + repoLink + '%H) - %aN ', '' + gitPrevHash + '...' + gitHash
-                standardOutput = stdout
-            }
-            return stdout.toString().trim()
-        }
-        else if (gitHash) {
-            exec {
-                commandLine 'git', 'log', '--pretty=tformat:- [%s](' + repoLink + '%H) - %aN', '-1', '' + gitHash
-                standardOutput = stdout
-            }
-            return stdout.toString().trim()
-        } else {
-            return "";
-        }
-    } catch(ignored) {
-        return "";
-    }
-}
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     description = 'Creates a JAR containing the source code.'
@@ -272,73 +202,12 @@ curseforge {
         releaseType = 'release'
         changelog = file("changelog.md")
         changelogType = 'markdown'
-
-//        addArtifact(sourcesJar)
-//        addArtifact(javadocJar)
+        mainArtifact(jar) {
+            relations {
+                requiredDependency "crafttweaker"
+                requiredDependency "game-stages"
+            }
+        }
         addArtifact(deobfJar)
     }
 }
-
-tasks.getByName("curseforge").doLast {
-
-    try {
-        def name = project.findProperty('name')
-        def mcVersion = "1.16.5"
-        def cursePage = "https://www.curseforge.com/minecraft/mc-mods/recipe-stages"
-        def curseProject = "280554"
-        // Reads the file ID given to us by CurseForge
-        def newFileId = tasks.getByName("curseforge${curseProject}").property('mainArtifact').fileID
-
-        def webhook = new Webhook(findProperty('discordCFWebhook'), "${name} Gradle Upload")
-
-        def message = new Message()
-        message.setUsername(name)
-        message.setContent("${name} ${version} for Minecraft ${mcVersion} has been released! The download will be available soon.")
-
-        def embed = new Embed()
-        embed.addField('Download', "${cursePage}/files/$newFileId", false)
-        embed.addField('Change Log', "${getCIChangelog() ?: 'Unavailable'}", false)
-
-        embed.setColor(0xF16436)
-        message.addEmbed(embed)
-        message.setAvatarUrl("https://media.forgecdn.net/avatars/128/69/636444415480522123.png")
-        webhook.sendMessage(message)
-    }
-
-    catch (IOException e) {
-        println 'Failed to push to the Discord webhook.'
-    }
-}
-
-task updateVersionTracker {
-
-    onlyIf {
-
-        project.hasProperty('versionTrackerAPI')
-    }
-
-    doLast {
-        def body = [
-                'author'        : "${project.findProperty('versionTrackerAuthor')}",
-                'projectName'   : "RecipeStages",
-                'gameVersion'   : "1.16.5",
-                'projectVersion': "${version}",
-                'homepage'      : "${project.findProperty('versionTrackerHomepage')}",
-                'uid'           : "${project.findProperty('versionTrackerKey')}"
-        ]
-
-        // Opens a connection to the version tracker API and writes the payload JSON.
-        def req = new URL(project.findProperty('versionTrackerAPI')).openConnection()
-        req.setRequestMethod('POST')
-        req.setRequestProperty('Content-Type', 'application/json; charset=UTF-8')
-        req.setRequestProperty('User-Agent', "RecipeStages Tracker Gradle")
-        req.setDoOutput(true)
-        req.getOutputStream().write(JsonOutput.toJson(body).getBytes("UTF-8"))
-
-        // We need to attempt a read in order to actually send the message.
-        println "VersionCheck Status code: ${req.getResponseCode()}"
-        println "VersionCheck Response: ${req.getInputStream().getText()}"
-    }
-
-}
-

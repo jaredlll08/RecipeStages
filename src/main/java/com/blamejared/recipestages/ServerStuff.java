@@ -13,6 +13,7 @@ import java.util.*;
 public class ServerStuff {
     
     public static boolean handleServer(CraftingInventory inv, String stage) {
+        
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if(server != null) {
             PlayerList manager = server.getPlayerList();
@@ -22,28 +23,29 @@ public class ServerStuff {
             }
             ServerPlayerEntity foundPlayer = null;
             for(ServerPlayerEntity serverPlayerEntity : manager.getPlayers()) {
-                ServerPlayerEntity entityPlayerMP = (ServerPlayerEntity) serverPlayerEntity;
-                if(entityPlayerMP.containerMenu == container && container.stillValid(entityPlayerMP) && container.isSynched(entityPlayerMP)) {
+                if(serverPlayerEntity.containerMenu == container && container.stillValid(serverPlayerEntity) && container
+                        .isSynched(serverPlayerEntity)) {
                     if(foundPlayer != null) {
                         return false;
                     }
                     
-                    foundPlayer = entityPlayerMP;
+                    foundPlayer = serverPlayerEntity;
                 }
             }
             if(foundPlayer != null) {
                 return GameStageHelper.getPlayerData(foundPlayer).hasStage(stage);
             }
             
-            Set<String> crafterStages = RecipeStages.containerStages.getOrDefault(inv.menu.getClass().getName(), new HashSet<>());
+            Set<String> crafterStages = RecipeStages.CONTAINER_STAGES.getOrDefault(inv.menu.getClass()
+                    .getName(), new HashSet<>());
             if(crafterStages.contains(stage)) {
                 return true;
             }
             
             Set<String> packageStages = new HashSet<>();
-            for(String s : RecipeStages.packageStages.keySet()) {
+            for(String s : RecipeStages.PACKAGE_STAGES.keySet()) {
                 if(inv.menu.getClass().getName().startsWith(s)) {
-                    packageStages.addAll(RecipeStages.packageStages.get(s));
+                    packageStages.addAll(RecipeStages.PACKAGE_STAGES.get(s));
                 }
             }
             return packageStages.contains(stage);
@@ -51,4 +53,5 @@ public class ServerStuff {
         
         return false;
     }
+    
 }
