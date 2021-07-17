@@ -20,15 +20,13 @@ if (project.hasProperty('secretFile')) {
     loadSecrets(new File((String) findProperty('secretFile')))
 }
 
-version = '1.0.1'
-if (System.getenv('BUILD_NUMBER') != null) {
-    version += "." + System.getenv('BUILD_NUMBER')
-}
-
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
 version = modVersion
+if (System.getenv('BUILD_NUMBER') != null) {
+    version += "." + System.getenv('BUILD_NUMBER')
+}
 group = modGroup
 archivesBaseName = modBaseName
 
