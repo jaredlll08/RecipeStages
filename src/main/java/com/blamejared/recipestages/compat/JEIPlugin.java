@@ -1,7 +1,6 @@
 package com.blamejared.recipestages.compat;
 
 
-import com.blamejared.crafttweaker.impl.managers.CTCraftingTableManager;
 import com.blamejared.recipestages.recipes.RecipeStage;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -9,6 +8,7 @@ import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.darkhax.gamestages.data.IStageData;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 
@@ -39,7 +39,7 @@ public class JEIPlugin implements IModPlugin {
     
     public static void sync(IStageData data) {
         
-        CTCraftingTableManager.recipeManager.getAllRecipesFor(IRecipeType.CRAFTING)
+        Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(IRecipeType.CRAFTING)
                 .stream()
                 .filter(iCraftingRecipe -> iCraftingRecipe instanceof RecipeStage)
                 .map(iCraftingRecipe -> (RecipeStage) iCraftingRecipe)

@@ -1,12 +1,19 @@
 package com.blamejared.recipestages.recipes;
 
-import com.blamejared.crafttweaker.api.CraftTweakerAPI;
-import com.blamejared.recipestages.*;
+import com.blamejared.recipestages.ClientStuff;
+import com.blamejared.recipestages.RecipeStages;
+import com.blamejared.recipestages.compat.RecipeStagesLogger;
+import com.blamejared.recipestages.ServerStuff;
 import net.darkhax.bookshelf.util.SidedExecutor;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
-import net.minecraft.util.*;
+import net.minecraft.item.crafting.ICraftingRecipe;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
@@ -82,11 +89,12 @@ public class RecipeStage implements ICraftingRecipe {
         // We do this check in ServerStuff later down the line,
         // which leads to a de-sync issue with the item showing on the client.
         if(inv.menu == null) {
-            CraftTweakerAPI.logError("Cannot craft staged recipes in inventory: `%s` as we have no access to a player or a container! Please report this to RecipeStages and the offending mod!", inv);
+            RecipeStagesLogger.instance.error("Cannot craft staged recipes in inventory: `%s` as we have no access to a player or a container! Please report this to RecipeStages and the offending mod!", inv);
             return false;
         }
         if(RecipeStages.printContainer) {
-            CraftTweakerAPI.logInfo("Tried to craft a recipe in container: `%s`", inv.menu.getClass().getName());
+            RecipeStagesLogger.instance.info("Tried to craft a recipe in container: `%s`", inv.menu.getClass()
+                    .getName());
         }
         
         return SidedExecutor.<Boolean> callForSide(

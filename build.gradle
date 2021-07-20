@@ -207,7 +207,7 @@ curseforge {
         changelogType = 'markdown'
         mainArtifact(jar) {
             relations {
-                requiredDependency "crafttweaker"
+                optionalDependency "crafttweaker"
                 requiredDependency "game-stages"
             }
         }

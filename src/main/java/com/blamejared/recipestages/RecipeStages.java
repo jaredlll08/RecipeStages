@@ -1,12 +1,13 @@
 package com.blamejared.recipestages;
 
-import com.blamejared.recipestages.events.ClientEventHandler;
+import com.blamejared.crafttweaker.CraftTweaker;
+import com.blamejared.recipestages.compat.RecipeStagesLogger;
+import com.blamejared.recipestages.compat.RecipeStagesLoggerWithCT;
+import com.blamejared.recipestages.compat.RecipeStagesLoggerWithoutCT;
 import com.blamejared.recipestages.recipes.RecipeStageSerializer;
 import net.minecraft.util.Util;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
@@ -29,13 +30,18 @@ public class RecipeStages {
     
     public RecipeStages() {
         
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         ForgeRegistries.RECIPE_SERIALIZERS.register(STAGE_SERIALIZER);
+        
+        if(ModList.get().isLoaded(CraftTweaker.MODID)) {
+            setCTLoggerSafely();
+        } else {
+            RecipeStagesLogger.instance = new RecipeStagesLoggerWithoutCT();
+        }
     }
     
-    private void doClientStuff(final FMLClientSetupEvent event) {
+    private void setCTLoggerSafely() {
         
-        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+        RecipeStagesLogger.instance = new RecipeStagesLoggerWithCT();
     }
     
 }
