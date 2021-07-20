@@ -18,7 +18,7 @@ ordering = "NONE"
 side = "BOTH"
 [[dependencies.recipestages]]
 modId = "crafttweaker"
-mandatory = true
+mandatory = false
 versionRange = "[7.1,)"
 ordering = "NONE"
 side = "BOTH"
