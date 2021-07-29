@@ -14,7 +14,7 @@ import java.util.*;
 
 import static com.blamejared.recipestages.reference.Reference.*;
 
-@Mod(modid = MOD_ID, name = MOD_NAME, version = VERSION, dependencies = "required-after:crafttweaker;after:gamestages@[2.0.90,)")
+@Mod(modid = MOD_ID, name = MOD_NAME, version = VERSION, dependencies = "required-after:crafttweaker@[4.1.20,);after:gamestages@[2.0.90,)")
 public class RecipeStages {
     
     

@@ -501,8 +501,15 @@ public class Recipes {
             this.recipe = recipe;
             this.output = output;
             this.isShaped = isShaped;
-            if(hasTransformers)
-                MCRecipeManager.transformerRecipes.add((MCRecipeBase) recipe.getRecipe());
+            IRecipe mcRecipe = recipe.getRecipe();
+            if (mcRecipe instanceof MCRecipeBase) {
+                MCRecipeBase ctRecipe = (MCRecipeBase) mcRecipe;
+                if(hasTransformers)
+                    MCRecipeManager.transformerRecipes.add(ctRecipe);
+                if (ctRecipe.hasRecipeAction()) {
+                    MCRecipeManager.actionRecipes.add(ctRecipe);
+                }
+            }
         }
         
         public IItemStack getOutput() {
