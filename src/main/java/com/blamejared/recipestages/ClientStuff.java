@@ -2,15 +2,21 @@ package com.blamejared.recipestages;
 
 import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraftforge.common.ForgeHooks;
 
 public class ClientStuff {
     
-    public static boolean handleClient(String stage) {
+    public static boolean handleClient(CraftingInventory inv, String stage) {
         
-        if(Minecraft.getInstance().player == null) {
+        
+        PlayerEntity player = Minecraft.getInstance().player != null ? Minecraft.getInstance().player : ForgeHooks.getCraftingPlayer();
+        if(player == null) {
             return true;
         }
-        return GameStageHelper.getPlayerData(Minecraft.getInstance().player).hasStage(stage);
+        System.out.println(GameStageHelper.getPlayerData(player).hasStage(stage));
+        return GameStageHelper.getPlayerData(player).hasStage(stage);
     }
     
 }

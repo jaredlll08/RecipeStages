@@ -2,8 +2,8 @@ package com.blamejared.recipestages.recipes;
 
 import com.blamejared.recipestages.ClientStuff;
 import com.blamejared.recipestages.RecipeStages;
-import com.blamejared.recipestages.compat.RecipeStagesLogger;
 import com.blamejared.recipestages.ServerStuff;
+import com.blamejared.recipestages.compat.RecipeStagesLogger;
 import net.darkhax.bookshelf.util.SidedExecutor;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
@@ -15,6 +15,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
 public class RecipeStage implements ICraftingRecipe {
@@ -66,8 +67,10 @@ public class RecipeStage implements ICraftingRecipe {
     public ItemStack assemble(CraftingInventory inv) {
         
         if(isGoodForCrafting(inv)) {
+            System.out.println("Good on side");
             return recipe.assemble(inv);
         }
+        System.out.println("not good on side");
         return ItemStack.EMPTY;
     }
     
@@ -88,8 +91,8 @@ public class RecipeStage implements ICraftingRecipe {
         
         // We do this check in ServerStuff later down the line,
         // which leads to a de-sync issue with the item showing on the client.
-        if(inv.menu == null) {
-            RecipeStagesLogger.instance.error("Cannot craft staged recipes in inventory: `%s` as we have no access to a player or a container! Please report this to RecipeStages and the offending mod!", inv);
+        if(inv.menu == null && ForgeHooks.getCraftingPlayer() == null) {
+//            RecipeStagesLogger.instance.error("Cannot craft staged recipes in inventory: `%s` as we have no access to a player or a container! Please report this to RecipeStages and the offending mod!", inv);
             return false;
         }
         if(RecipeStages.printContainer) {
@@ -98,7 +101,7 @@ public class RecipeStage implements ICraftingRecipe {
         }
         
         return SidedExecutor.<Boolean> callForSide(
-                () -> () -> ClientStuff.handleClient(stage),
+                () -> () -> ClientStuff.handleClient(inv,stage),
                 () -> () -> ServerStuff.handleServer(inv, stage));
     }
     

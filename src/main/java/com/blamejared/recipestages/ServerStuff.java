@@ -6,6 +6,7 @@ import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.*;
@@ -19,6 +20,9 @@ public class ServerStuff {
             PlayerList manager = server.getPlayerList();
             Container container = inv.menu;
             if(container == null) {
+                if(ForgeHooks.getCraftingPlayer() != null) {
+                    return GameStageHelper.getPlayerData(ForgeHooks.getCraftingPlayer()).hasStage(stage);
+                }
                 return false;
             }
             ServerPlayerEntity foundPlayer = null;
@@ -36,9 +40,8 @@ public class ServerStuff {
                 return GameStageHelper.getPlayerData(foundPlayer).hasStage(stage);
             }
             
-            Set<String> crafterStages = RecipeStages.CONTAINER_STAGES.getOrDefault(inv.menu.getClass()
-                    .getName(), new HashSet<>());
-            if(crafterStages.contains(stage)) {
+            if(RecipeStages.CONTAINER_STAGES.getOrDefault(inv.menu.getClass().getName(), new HashSet<>())
+                    .contains(stage)) {
                 return true;
             }
             

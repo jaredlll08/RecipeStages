@@ -100,14 +100,17 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.1.1'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.2'
 
-    compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.5:7.1.0.90")
+    compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.5:7.1.2.404")
 
-    compile fg.deobf("net.darkhax.gamestages:GameStages-1.16.4:6.0.1")
-    compile fg.deobf("net.darkhax.bookshelf:Bookshelf-1.16.4:9.3.18")
+    compile fg.deobf("net.darkhax.gamestages:GameStages-Forge-1.16.5:7.3.10")
+    compile fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-1.16.5:10.2.27")
     compile fg.deobf("mezz.jei:jei-1.16.4:7.6.1.65")
     compile fg.deobf("com.refinedmods:refinedstorage:1.9.12+151")
+
+    compile fg.deobf("slimeknights.mantle:Mantle:1.16.5-1.6.116")
+    compile fg.deobf("slimeknights.tconstruct:TConstruct:1.16.5-3.1.1.252")
 }
 
 jar {
