@@ -67,10 +67,8 @@ public class RecipeStage implements ICraftingRecipe {
     public ItemStack assemble(CraftingInventory inv) {
         
         if(isGoodForCrafting(inv)) {
-            System.out.println("Good on side");
             return recipe.assemble(inv);
         }
-        System.out.println("not good on side");
         return ItemStack.EMPTY;
     }
     

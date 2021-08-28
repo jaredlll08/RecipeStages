@@ -15,7 +15,6 @@ public class ClientStuff {
         if(player == null) {
             return true;
         }
-        System.out.println(GameStageHelper.getPlayerData(player).hasStage(stage));
         return GameStageHelper.getPlayerData(player).hasStage(stage);
     }
     
