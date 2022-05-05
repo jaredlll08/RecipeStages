@@ -80,11 +80,11 @@ modTemplate {
         projectName "RecipeStages"
         author "Jared"
     }
-//    webhook {
-//        enabled true
-//        curseId "280554"
-//        avatarUrl "https://media.forgecdn.net/avatars/128/69/636444415480522123.png"
-//    }
+    webhook {
+        enabled true
+        curseId "280554"
+        avatarUrl "https://media.forgecdn.net/avatars/128/69/636444415480522123.png"
+    }
 }
 
 repositories {
