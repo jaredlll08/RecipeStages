@@ -1,24 +1,24 @@
 modLoader = "javafml"
-loaderVersion = "[35,)"
+loaderVersion = "[40,)"
 license = "MIT"
 [[mods]]
 modId = "recipestages"
 version = "${file.jarVersion}"
 displayName = "Recipe Stages"
 authors = "Jaredlll08"
-updateJSONURL = "https://updates.blamejared.com/get?n=recipestages&gv=1.16.5"
+updateJSONURL = "https://updates.blamejared.com/get?n=recipestages&gv=1.18.2"
 description = '''
 Allows recipes to be staged using GameStages and CraftTweaker
 '''
 [[dependencies.recipestages]]
 modId = "gamestages"
 mandatory = true
-versionRange = "[6.0,)"
+versionRange = "[8.0,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.recipestages]]
 modId = "crafttweaker"
 mandatory = false
-versionRange = "[7.1,)"
+versionRange = "[9.1,)"
 ordering = "NONE"
 side = "BOTH"

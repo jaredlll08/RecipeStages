@@ -1,14 +1,17 @@
 package com.blamejared.recipestages;
 
-import com.blamejared.crafttweaker.CraftTweaker;
-import com.blamejared.recipestages.compat.RecipeStagesLogger;
-import com.blamejared.recipestages.compat.RecipeStagesLoggerWithCT;
-import com.blamejared.recipestages.compat.RecipeStagesLoggerWithoutCT;
+import com.blamejared.crafttweaker.api.CraftTweakerConstants;
+import com.blamejared.crafttweaker.api.logger.CraftTweakerLogger;
 import com.blamejared.recipestages.recipes.RecipeStageSerializer;
-import net.minecraft.util.Util;
+import net.minecraft.Util;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,20 +31,21 @@ public class RecipeStages {
     public static boolean printContainer = false;
     public static boolean showJEILabel = true;
     
+    public static Logger CONTAINER_LOGGER = LogManager.getLogger("Recipe Stages");
+    
     public RecipeStages() {
         
-        ForgeRegistries.RECIPE_SERIALIZERS.register(STAGE_SERIALIZER);
-        
-        if(ModList.get().isLoaded(CraftTweaker.MODID)) {
-            setCTLoggerSafely();
-        } else {
-            RecipeStagesLogger.instance = new RecipeStagesLoggerWithoutCT();
+        if(ModList.get().isLoaded(CraftTweakerConstants.MOD_ID)) {
+            CONTAINER_LOGGER = LogManager.getLogger(CraftTweakerLogger.LOGGER_NAME);
         }
+        
+        MinecraftForge.EVENT_BUS.register(this);
     }
     
-    private void setCTLoggerSafely() {
+    @SubscribeEvent
+    public void registerSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
         
-        RecipeStagesLogger.instance = new RecipeStagesLoggerWithCT();
+        event.getRegistry().register(STAGE_SERIALIZER);
     }
     
 }

@@ -1,34 +1,34 @@
 package com.blamejared.recipestages;
 
 import net.darkhax.gamestages.GameStageHelper;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerList;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ServerStuff {
     
-    public static boolean handleServer(CraftingInventory inv, String stage) {
+    public static boolean handleServer(CraftingContainer inv, String stage) {
         
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if(server != null) {
             PlayerList manager = server.getPlayerList();
-            Container container = inv.menu;
+            AbstractContainerMenu container = inv.menu;
             if(container == null) {
                 if(ForgeHooks.getCraftingPlayer() != null) {
                     return GameStageHelper.getPlayerData(ForgeHooks.getCraftingPlayer()).hasStage(stage);
                 }
                 return false;
             }
-            ServerPlayerEntity foundPlayer = null;
-            for(ServerPlayerEntity serverPlayerEntity : manager.getPlayers()) {
-                if(serverPlayerEntity.containerMenu == container && container.stillValid(serverPlayerEntity) && container
-                        .isSynched(serverPlayerEntity)) {
+            ServerPlayer foundPlayer = null;
+            for(ServerPlayer serverPlayerEntity : manager.getPlayers()) {
+                if(serverPlayerEntity.containerMenu == container && container.stillValid(serverPlayerEntity)) {
                     if(foundPlayer != null) {
                         return false;
                     }

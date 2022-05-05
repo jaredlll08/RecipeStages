@@ -1,20 +1,22 @@
 package com.blamejared.recipestages.handlers.actions;
 
-import com.blamejared.crafttweaker.api.logger.ILogger;
-import com.blamejared.crafttweaker.api.managers.IRecipeManager;
+import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
 import com.blamejared.recipestages.handlers.actions.base.ActionStageBase;
 import com.blamejared.recipestages.recipes.RecipeStage;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ActionSetStageByName extends ActionStageBase {
     
     private final ResourceLocation name;
     
-    public ActionSetStageByName(IRecipeManager manager, String stage, ResourceLocation name) {
+    public ActionSetStageByName(IRecipeManager<CraftingRecipe> manager, String stage, ResourceLocation name) {
         
         super(manager, stage);
         this.name = name;
@@ -22,8 +24,8 @@ public class ActionSetStageByName extends ActionStageBase {
     
     public void apply() {
         
-        List<Map.Entry<ResourceLocation, IRecipe<?>>> toChange = new ArrayList<>();
-        for(Map.Entry<ResourceLocation, IRecipe<?>> entry : this.getManager().getRecipes().entrySet()) {
+        List<Map.Entry<ResourceLocation, CraftingRecipe>> toChange = new ArrayList<>();
+        for(Map.Entry<ResourceLocation, CraftingRecipe> entry : this.getManager().getRecipes().entrySet()) {
             if(name.equals(entry.getKey())) {
                 toChange.add(entry);
                 continue;
@@ -43,17 +45,17 @@ public class ActionSetStageByName extends ActionStageBase {
     @Override
     public String describe() {
         
-        return "Setting the stage of  \"" + Registry.RECIPE_TYPE.getKey(this.getManager()
+        return "Setting the stage of \"" + Registry.RECIPE_TYPE.getKey(this.getManager()
                 .getRecipeType()) + "\" recipes with name: " + this.name + "\" to \"" + stage + "\"";
     }
     
-    public boolean validate(ILogger logger) {
+    public boolean validate(Logger logger) {
         
         boolean containsKey = this.getManager().getRecipes().containsKey(this.name) || this.getManager()
                 .getRecipes()
                 .containsKey(new ResourceLocation("recipestages", this.name.toString().replaceAll(":", "_")));
         if(!containsKey) {
-            logger.warning("No recipe with type: \"" + Registry.RECIPE_TYPE.getKey(this.getManager()
+            logger.warn("No recipe with type: \"" + Registry.RECIPE_TYPE.getKey(this.getManager()
                     .getRecipeType()) + "\" and name: \"" + this.name + "\"");
         }
         

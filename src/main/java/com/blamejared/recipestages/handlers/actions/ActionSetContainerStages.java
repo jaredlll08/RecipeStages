@@ -1,6 +1,6 @@
 package com.blamejared.recipestages.handlers.actions;
 
-import com.blamejared.crafttweaker.api.actions.IUndoableAction;
+import com.blamejared.crafttweaker.api.action.base.IUndoableAction;
 import com.blamejared.recipestages.RecipeStages;
 
 import java.util.Arrays;
@@ -22,7 +22,7 @@ public class ActionSetContainerStages implements IUndoableAction {
     public void undo() {
         
         Set<String> strings = RecipeStages.CONTAINER_STAGES.computeIfAbsent(containerName, s -> new HashSet<>());
-        strings.removeAll(Arrays.asList(stages));
+        Arrays.asList(stages).forEach(strings::remove);
     }
     
     @Override

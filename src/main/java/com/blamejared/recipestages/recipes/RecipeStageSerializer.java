@@ -1,15 +1,19 @@
 package com.blamejared.recipestages.recipes;
 
-import com.google.gson.*;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.crafting.*;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
-import net.minecraftforge.registries.*;
+import com.blamejared.crafttweaker.api.util.GenericUtil;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.crafting.*;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
-public class RecipeStageSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<RecipeStage> {
+public class RecipeStageSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<RecipeStage> {
     
     public RecipeStageSerializer() {
     
@@ -18,38 +22,38 @@ public class RecipeStageSerializer extends ForgeRegistryEntry<IRecipeSerializer<
     @Override
     public RecipeStage fromJson(ResourceLocation recipeId, JsonObject json) {
         
-        String stage = JSONUtils.getAsString(json, "stage");
-        IRecipe<?> recipe = RecipeManager.fromJson(recipeId, JSONUtils.getAsJsonObject(json, "recipe"));
+        String stage = GsonHelper.getAsString(json, "stage");
+        Recipe<?> recipe = RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(json, "recipe"));
         
-        if(recipe.getType() != IRecipeType.CRAFTING) {
+        if(!(recipe instanceof CraftingRecipe craftingRecipe)) {
             throw new JsonSyntaxException("Staged Recipes only work with Crafting Table Recipes");
         }
         
-        boolean shapeless = json.has("shapeless") ? JSONUtils.getAsBoolean(json, "shapeless") : (recipe instanceof ShapelessRecipe);
-        return new RecipeStage(recipeId, stage, (IRecipe<CraftingInventory>) recipe, shapeless);
+        boolean shapeless = json.has("shapeless") ? GsonHelper.getAsBoolean(json, "shapeless") : (recipe instanceof ShapelessRecipe);
+        return new RecipeStage(recipeId, stage,  craftingRecipe, shapeless);
     }
     
     @Nullable
     @Override
-    public RecipeStage fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+    public RecipeStage fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         
         ResourceLocation innerRecipeId = buffer.readResourceLocation();
         ResourceLocation recipeSerializerId = buffer.readResourceLocation();
-        IRecipeSerializer<?> value = ForgeRegistries.RECIPE_SERIALIZERS.getValue(recipeSerializerId);
-        IRecipe<?> read = value.fromNetwork(innerRecipeId, buffer);
+        RecipeSerializer<?> value = ForgeRegistries.RECIPE_SERIALIZERS.getValue(recipeSerializerId);
+        Recipe<?> read = value.fromNetwork(innerRecipeId, buffer);
         
         String stage = buffer.readUtf();
         boolean shapeless = buffer.readBoolean();
-        return new RecipeStage(recipeId, stage, (IRecipe<CraftingInventory>) read, shapeless);
+        return new RecipeStage(recipeId, stage, (CraftingRecipe) read, shapeless);
     }
     
     @Override
-    public void toNetwork(PacketBuffer buffer, RecipeStage recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, RecipeStage recipe) {
         
-        IRecipe recipe1 = recipe.getRecipe();
+        Recipe<CraftingContainer> recipe1 = recipe.getRecipe();
         buffer.writeResourceLocation(recipe1.getId());
         buffer.writeResourceLocation(recipe1.getSerializer().getRegistryName());
-        recipe1.getSerializer().toNetwork(buffer, recipe1);
+        recipe1.getSerializer().toNetwork(buffer, GenericUtil.uncheck(recipe1));
         buffer.writeUtf(recipe.getStage());
         buffer.writeBoolean(recipe.isShapeless());
     }

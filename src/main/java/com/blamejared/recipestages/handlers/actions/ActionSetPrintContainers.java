@@ -1,8 +1,8 @@
 package com.blamejared.recipestages.handlers.actions;
 
-import com.blamejared.crafttweaker.api.actions.IUndoableAction;
+import com.blamejared.crafttweaker.api.action.base.IUndoableAction;
+import com.blamejared.crafttweaker.api.zencode.IScriptLoadSource;
 import com.blamejared.recipestages.RecipeStages;
-import net.minecraftforge.fml.LogicalSide;
 
 public class ActionSetPrintContainers implements IUndoableAction {
     
@@ -38,7 +38,7 @@ public class ActionSetPrintContainers implements IUndoableAction {
     }
     
     @Override
-    public boolean shouldApplyOn(LogicalSide side) {
+    public boolean shouldApplyOn(IScriptLoadSource source) {
         
         return true;
     }

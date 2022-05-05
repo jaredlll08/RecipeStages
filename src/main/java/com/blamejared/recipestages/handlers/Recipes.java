@@ -1,17 +1,20 @@
 package com.blamejared.recipestages.handlers;
 
 import com.blamejared.crafttweaker.api.CraftTweakerAPI;
-import com.blamejared.crafttweaker.api.annotations.ZenRegister;
-import com.blamejared.crafttweaker.api.item.*;
-import com.blamejared.crafttweaker.api.managers.IRecipeManager;
-import com.blamejared.crafttweaker.impl.actions.recipes.ActionAddRecipe;
-import com.blamejared.crafttweaker.impl.managers.CTCraftingTableManager;
-import com.blamejared.crafttweaker.impl.recipes.*;
+import com.blamejared.crafttweaker.api.action.recipe.ActionAddRecipe;
+import com.blamejared.crafttweaker.api.annotation.ZenRegister;
+import com.blamejared.crafttweaker.api.ingredient.IIngredient;
+import com.blamejared.crafttweaker.api.item.IItemStack;
+import com.blamejared.crafttweaker.api.recipe.MirrorAxis;
+import com.blamejared.crafttweaker.api.recipe.function.RecipeFunctionArray;
+import com.blamejared.crafttweaker.api.recipe.function.RecipeFunctionMatrix;
+import com.blamejared.crafttweaker.api.recipe.manager.CraftingTableRecipeManager;
+import com.blamejared.crafttweaker.api.recipe.type.CTShapedRecipe;
+import com.blamejared.crafttweaker.api.recipe.type.CTShapelessRecipe;
 import com.blamejared.recipestages.handlers.actions.*;
 import com.blamejared.recipestages.recipes.RecipeStage;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.openzen.zencode.java.ZenCodeType;
-
 
 @ZenCodeType.Name("mods.recipestages.Recipes")
 @ZenRegister
@@ -25,6 +28,7 @@ public class Recipes {
     
     @ZenCodeType.Method
     public static void setPrintContainers(boolean printContainers) {
+        
         
         CraftTweakerAPI.apply(new ActionSetPrintContainers(printContainers));
     }
@@ -42,63 +46,63 @@ public class Recipes {
     }
     
     @ZenCodeType.Method
-    public static void addShaped(String stage, String recipeName, IItemStack output, IIngredient[][] ingredients, @ZenCodeType.Optional IRecipeManager.RecipeFunctionMatrix recipeFunction) {
+    public static void addShaped(String stage, String recipeName, IItemStack output, IIngredient[][] ingredients, @ZenCodeType.Optional RecipeFunctionMatrix recipeFunction) {
         
-        recipeName = CTCraftingTableManager.INSTANCE.validateRecipeName(recipeName);
+        recipeName = CraftingTableRecipeManager.INSTANCE.fixRecipeName(recipeName);
         
-        CTRecipeShaped innerRecipe = new CTRecipeShaped(recipeName, output, ingredients, false, recipeFunction);
+        CTShapedRecipe innerRecipe = new CTShapedRecipe(recipeName, output, ingredients, MirrorAxis.NONE, recipeFunction);
         RecipeStage recipe = new RecipeStage(new ResourceLocation("recipestages", recipeName), stage, innerRecipe, false);
-        CraftTweakerAPI.apply(new ActionAddRecipe(CTCraftingTableManager.INSTANCE, recipe, "shaped"));
+        CraftTweakerAPI.apply(new ActionAddRecipe<>(CraftingTableRecipeManager.INSTANCE, recipe, "shaped"));
     }
     
     @ZenCodeType.Method
-    public static void addShapedMirrored(String stage, String recipeName, IItemStack output, IIngredient[][] ingredients, @ZenCodeType.Optional IRecipeManager.RecipeFunctionMatrix recipeFunction) {
+    public static void addShapedMirrored(String stage, String recipeName, MirrorAxis mirrorAxis, IItemStack output, IIngredient[][] ingredients, @ZenCodeType.Optional RecipeFunctionMatrix recipeFunction) {
         
-        recipeName = CTCraftingTableManager.INSTANCE.validateRecipeName(recipeName);
-        CTRecipeShaped innerRecipe = new CTRecipeShaped(recipeName, output, ingredients, true, recipeFunction);
+        recipeName = CraftingTableRecipeManager.INSTANCE.fixRecipeName(recipeName);
+        CTShapedRecipe innerRecipe = new CTShapedRecipe(recipeName, output, ingredients, mirrorAxis, recipeFunction);
         RecipeStage recipe = new RecipeStage(new ResourceLocation("recipestages", recipeName), stage, innerRecipe, false);
-        CraftTweakerAPI.apply(new ActionAddRecipe(CTCraftingTableManager.INSTANCE, recipe, "mirroring shaped"));
+        CraftTweakerAPI.apply(new ActionAddRecipe<>(CraftingTableRecipeManager.INSTANCE, recipe, "mirroring shaped"));
     }
     
     @ZenCodeType.Method
-    public static void addShapeless(String stage, String recipeName, IItemStack output, IIngredient[] ingredients, @ZenCodeType.Optional IRecipeManager.RecipeFunctionArray recipeFunction) {
+    public static void addShapeless(String stage, String recipeName, IItemStack output, IIngredient[] ingredients, @ZenCodeType.Optional RecipeFunctionArray recipeFunction) {
         
-        recipeName = CTCraftingTableManager.INSTANCE.validateRecipeName(recipeName);
+        recipeName = CraftingTableRecipeManager.INSTANCE.fixRecipeName(recipeName);
         
-        CTRecipeShapeless innerRecipe = new CTRecipeShapeless(recipeName, output, ingredients, recipeFunction);
+        CTShapelessRecipe innerRecipe = new CTShapelessRecipe(recipeName, output, ingredients, recipeFunction);
         RecipeStage recipe = new RecipeStage(new ResourceLocation("recipestages", recipeName), stage, innerRecipe, true);
-        CraftTweakerAPI.apply(new ActionAddRecipe(CTCraftingTableManager.INSTANCE, recipe, "shapeless"));
+        CraftTweakerAPI.apply(new ActionAddRecipe<>(CraftingTableRecipeManager.INSTANCE, recipe, "shapeless"));
     }
     
     
     @ZenCodeType.Method
     public static void setRecipeStage(String stage, IIngredient output) {
         
-        CraftTweakerAPI.apply(new ActionSetStageByOutput(CTCraftingTableManager.INSTANCE, stage, output));
+        CraftTweakerAPI.apply(new ActionSetStageByOutput(CraftingTableRecipeManager.INSTANCE, stage, output));
     }
     
     @ZenCodeType.Method
     public static void setRecipeStage(String stage, ResourceLocation name) {
         
-        CraftTweakerAPI.apply(new ActionSetStageByName(CTCraftingTableManager.INSTANCE, stage, name));
+        CraftTweakerAPI.apply(new ActionSetStageByName(CraftingTableRecipeManager.INSTANCE, stage, name));
     }
     
     @ZenCodeType.Method
     public static void clearRecipeStage(IIngredient output) {
         
-        CraftTweakerAPI.apply(new ActionClearStageByOutput(CTCraftingTableManager.INSTANCE, output));
+        CraftTweakerAPI.apply(new ActionClearStageByOutput(CraftingTableRecipeManager.INSTANCE, output));
     }
     
     @ZenCodeType.Method
     public static void clearRecipeStage(ResourceLocation name) {
         
-        CraftTweakerAPI.apply(new ActionClearStageByName(CTCraftingTableManager.INSTANCE, name));
+        CraftTweakerAPI.apply(new ActionClearStageByName(CraftingTableRecipeManager.INSTANCE, name));
     }
     
     @ZenCodeType.Method
     public static void setRecipeStageByMod(String stage, String modid) {
         
-        CraftTweakerAPI.apply(new ActionSetStageByMod(CTCraftingTableManager.INSTANCE, stage, modid));
+        CraftTweakerAPI.apply(new ActionSetStageByMod(CraftingTableRecipeManager.INSTANCE, stage, modid));
     }
     
 }

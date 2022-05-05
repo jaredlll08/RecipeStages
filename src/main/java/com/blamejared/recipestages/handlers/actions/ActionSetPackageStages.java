@@ -1,6 +1,6 @@
 package com.blamejared.recipestages.handlers.actions;
 
-import com.blamejared.crafttweaker.api.actions.IUndoableAction;
+import com.blamejared.crafttweaker.api.action.base.IUndoableAction;
 import com.blamejared.recipestages.RecipeStages;
 
 import java.util.Arrays;
