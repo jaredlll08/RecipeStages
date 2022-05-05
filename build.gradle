@@ -8,7 +8,7 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.4.0"
-        classpath group: 'com.blamejared', name: 'ModTemplate', version: '3.+', changing: true
+        classpath group: 'com.blamejared', name: 'ModTemplate', version: '2.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7.+'
 
     }
