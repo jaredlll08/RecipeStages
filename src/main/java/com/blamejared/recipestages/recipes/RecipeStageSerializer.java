@@ -51,6 +51,12 @@ public class RecipeStageSerializer extends ForgeRegistryEntry<RecipeSerializer<?
     public void toNetwork(FriendlyByteBuf buffer, RecipeStage recipe) {
         
         Recipe<CraftingContainer> recipe1 = recipe.getRecipe();
+        if(recipe1.getId() == null){
+            throw new IllegalArgumentException("Unable to serialize a recipe without an id: " + recipe1);
+        }
+        if(recipe1.getSerializer().getRegistryName() == null ){
+            throw new IllegalArgumentException("Unable to serialize a recipe serializer without an id: " + recipe1.getSerializer());
+        }
         buffer.writeResourceLocation(recipe1.getId());
         buffer.writeResourceLocation(recipe1.getSerializer().getRegistryName());
         recipe1.getSerializer().toNetwork(buffer, GenericUtil.uncheck(recipe1));
