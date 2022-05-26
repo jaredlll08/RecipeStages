@@ -102,7 +102,7 @@ dependencies {
 //
     implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:9.1.123")
 //
-    implementation fg.deobf("net.darkhax.gamestages:GameStages-Forge-1.18.2:8.0.1")
+    implementation fg.deobf("net.darkhax.gamestages:GameStages-Forge-1.18.2:8.0.2")
     implementation fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-1.18.2:13.0.13")
     implementation fg.deobf("mezz.jei:jei-1.18.2:9.7.0.194")
 }

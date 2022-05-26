@@ -16,7 +16,8 @@ import javax.annotation.Nullable;
 public class RecipeStageSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<RecipeStage> {
     
     public RecipeStageSerializer() {
-    
+        
+        this.setRegistryName("recipestages", "stage");
     }
     
     @Override
@@ -30,7 +31,7 @@ public class RecipeStageSerializer extends ForgeRegistryEntry<RecipeSerializer<?
         }
         
         boolean shapeless = json.has("shapeless") ? GsonHelper.getAsBoolean(json, "shapeless") : (recipe instanceof ShapelessRecipe);
-        return new RecipeStage(recipeId, stage,  craftingRecipe, shapeless);
+        return new RecipeStage(recipeId, stage, craftingRecipe, shapeless);
     }
     
     @Nullable
@@ -51,10 +52,10 @@ public class RecipeStageSerializer extends ForgeRegistryEntry<RecipeSerializer<?
     public void toNetwork(FriendlyByteBuf buffer, RecipeStage recipe) {
         
         Recipe<CraftingContainer> recipe1 = recipe.getRecipe();
-        if(recipe1.getId() == null){
+        if(recipe1.getId() == null) {
             throw new IllegalArgumentException("Unable to serialize a recipe without an id: " + recipe1);
         }
-        if(recipe1.getSerializer().getRegistryName() == null ){
+        if(recipe1.getSerializer().getRegistryName() == null) {
             throw new IllegalArgumentException("Unable to serialize a recipe serializer without an id: " + recipe1.getSerializer());
         }
         buffer.writeResourceLocation(recipe1.getId());
