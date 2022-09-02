@@ -1,7 +1,7 @@
 package com.blamejared.recipestages.compat;
 
 
-import com.blamejared.crafttweaker.api.util.GenericUtil;
+import com.blamejared.recipestages.RecipeStagesUtil;
 import com.blamejared.recipestages.recipes.RecipeStage;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -54,10 +54,10 @@ public class JEIPlugin implements IModPlugin {
                 .forEach((hasStage, recipes) -> {
                     if(hasStage) {
                         JEIPlugin.runTime.getRecipeManager()
-                                .unhideRecipes(RecipeTypes.CRAFTING, GenericUtil.uncheck(recipes));
+                                .unhideRecipes(RecipeTypes.CRAFTING, RecipeStagesUtil.cast(recipes));
                     } else {
                         JEIPlugin.runTime.getRecipeManager()
-                                .hideRecipes(RecipeTypes.CRAFTING, GenericUtil.uncheck(recipes));
+                                .hideRecipes(RecipeTypes.CRAFTING, RecipeStagesUtil.cast(recipes));
                     }
                 });
     }

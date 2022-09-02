@@ -1,6 +1,6 @@
 package com.blamejared.recipestages.recipes;
 
-import com.blamejared.crafttweaker.api.util.GenericUtil;
+import com.blamejared.recipestages.RecipeStagesUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.network.FriendlyByteBuf;
@@ -60,7 +60,7 @@ public class RecipeStageSerializer extends ForgeRegistryEntry<RecipeSerializer<?
         }
         buffer.writeResourceLocation(recipe1.getId());
         buffer.writeResourceLocation(recipe1.getSerializer().getRegistryName());
-        recipe1.getSerializer().toNetwork(buffer, GenericUtil.uncheck(recipe1));
+        recipe1.getSerializer().toNetwork(buffer, RecipeStagesUtil.cast(recipe1));
         buffer.writeUtf(recipe.getStage());
         buffer.writeBoolean(recipe.isShapeless());
     }
