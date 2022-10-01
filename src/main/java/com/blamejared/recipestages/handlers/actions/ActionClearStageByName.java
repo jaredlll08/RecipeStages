@@ -37,7 +37,7 @@ public class ActionClearStageByName extends ActionClearBase {
             }
         }
         
-        toChange.forEach(entry -> this.getManager().getRecipes().remove(entry.getKey()));
+        toChange.forEach(entry -> this.getManager().getRecipeList().remove(entry.getKey()));
         
         clearRecipes(toChange);
     }

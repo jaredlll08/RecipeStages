@@ -34,7 +34,7 @@ public class ActionSetStageByOutput extends ActionStageBase {
                 toChange.add(entry);
             }
         }
-        toChange.forEach(entry -> this.getManager().getRecipes().remove(entry.getKey()));
+        toChange.forEach(entry -> this.getManager().getRecipeList().remove(entry.getKey()));
         stageRecipes(toChange);
     }
     

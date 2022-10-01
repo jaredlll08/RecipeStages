@@ -13,6 +13,7 @@ import com.blamejared.crafttweaker.api.recipe.type.CTShapedRecipe;
 import com.blamejared.crafttweaker.api.recipe.type.CTShapelessRecipe;
 import com.blamejared.recipestages.handlers.actions.*;
 import com.blamejared.recipestages.recipes.RecipeStage;
+import com.blamejared.recipestages.recipes.ShapedRecipeStage;
 import net.minecraft.resources.ResourceLocation;
 import org.openzen.zencode.java.ZenCodeType;
 
@@ -51,7 +52,8 @@ public class Recipes {
         recipeName = CraftingTableRecipeManager.INSTANCE.fixRecipeName(recipeName);
         
         CTShapedRecipe innerRecipe = new CTShapedRecipe(recipeName, output, ingredients, MirrorAxis.NONE, recipeFunction);
-        RecipeStage recipe = new RecipeStage(new ResourceLocation("recipestages", recipeName), stage, innerRecipe, false);
+        
+        ShapedRecipeStage recipe = new ShapedRecipeStage(new ResourceLocation("recipestages", recipeName), stage, innerRecipe);
         CraftTweakerAPI.apply(new ActionAddRecipe<>(CraftingTableRecipeManager.INSTANCE, recipe, "shaped"));
     }
     
@@ -60,7 +62,7 @@ public class Recipes {
         
         recipeName = CraftingTableRecipeManager.INSTANCE.fixRecipeName(recipeName);
         CTShapedRecipe innerRecipe = new CTShapedRecipe(recipeName, output, ingredients, mirrorAxis, recipeFunction);
-        RecipeStage recipe = new RecipeStage(new ResourceLocation("recipestages", recipeName), stage, innerRecipe, false);
+        ShapedRecipeStage recipe = new ShapedRecipeStage(new ResourceLocation("recipestages", recipeName), stage, innerRecipe);
         CraftTweakerAPI.apply(new ActionAddRecipe<>(CraftingTableRecipeManager.INSTANCE, recipe, "mirroring shaped"));
     }
     

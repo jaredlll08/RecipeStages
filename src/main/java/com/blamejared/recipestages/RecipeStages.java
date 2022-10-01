@@ -3,6 +3,7 @@ package com.blamejared.recipestages;
 import com.blamejared.crafttweaker.api.CraftTweakerConstants;
 import com.blamejared.crafttweaker.api.logger.CraftTweakerLogger;
 import com.blamejared.recipestages.recipes.RecipeStageSerializer;
+import com.blamejared.recipestages.recipes.ShapedRecipeStageSerializer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,6 +21,8 @@ import java.util.Set;
 public class RecipeStages {
     
     public static final RecipeStageSerializer STAGE_SERIALIZER = new RecipeStageSerializer();
+    public static final ShapedRecipeStageSerializer SHAPED_STAGE_SERIALIZER = new ShapedRecipeStageSerializer();
+    
     public static final Map<String, Set<String>> PACKAGE_STAGES = new HashMap<>();
     public static final Map<String, Set<String>> CONTAINER_STAGES = new HashMap<>();
     
@@ -41,6 +44,7 @@ public class RecipeStages {
     public void registerSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
         
         event.getRegistry().register(STAGE_SERIALIZER);
+        event.getRegistry().register(SHAPED_STAGE_SERIALIZER);
     }
     
 }

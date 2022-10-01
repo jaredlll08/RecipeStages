@@ -17,31 +17,26 @@ import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 
 import javax.annotation.Nullable;
+import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
-public class RecipeStage implements CraftingRecipe {
+public class ShapedRecipeStage implements CraftingRecipe, IShapedRecipe<CraftingContainer> {
     
     private final ResourceLocation id;
     private final String stage;
     private final CraftingRecipe recipe;
     
-    private final boolean shapeless;
+    private int width;
+    private int height;
     
-    private int width = 0;
-    private int height = 0;
-    
-    public RecipeStage(ResourceLocation id, String stage, CraftingRecipe recipe, boolean shapeless) {
+    public ShapedRecipeStage(ResourceLocation id, String stage, CraftingRecipe recipe) {
         
         this.id = id;
         this.stage = stage;
         this.recipe = recipe;
-        this.shapeless = shapeless;
-        // maintains prior compat even though we have ShapedRecipeStage now
-        if(recipe instanceof IShapedRecipe) {
-            this.width = ((IShapedRecipe<CraftingContainer>) recipe).getRecipeWidth();
-            this.height = ((IShapedRecipe<CraftingContainer>) recipe).getRecipeHeight();
-        }
+        this.width = ((IShapedRecipe<CraftingContainer>) recipe).getRecipeWidth();
+        this.height = ((IShapedRecipe<CraftingContainer>) recipe).getRecipeHeight();
     }
     
     @Override
@@ -153,14 +148,13 @@ public class RecipeStage implements CraftingRecipe {
     @Override
     public String toString() {
         
-        return "RecipeStage{" + "stage='" + stage + '\'' +
-                ", recipe=" + recipe.getResultItem() + ":" + recipe.getIngredients() +
-                '}';
-    }
-    
-    public boolean isShapeless() {
-        
-        return shapeless;
+        return new StringJoiner(", ", ShapedRecipeStage.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("stage='" + stage + "'")
+                .add("recipe=" + recipe)
+                .add("width=" + width)
+                .add("height=" + height)
+                .toString();
     }
     
     public int getWidth() {
@@ -171,6 +165,18 @@ public class RecipeStage implements CraftingRecipe {
     public int getHeight() {
         
         return height;
+    }
+    
+    @Override
+    public int getRecipeWidth() {
+        
+        return getWidth();
+    }
+    
+    @Override
+    public int getRecipeHeight() {
+        
+        return getHeight();
     }
     
 }

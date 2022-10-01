@@ -26,7 +26,7 @@ public abstract class ActionClearBase extends ActionRecipeBase<CraftingRecipe> {
                 recipe = ((RecipeStage) recipe).getRecipe();
             }
             ResourceLocation id = new ResourceLocation("recipestages", key.replaceAll(":", "_"));
-            this.getManager().getRecipes().put(id, recipe);
+            this.getManager().getRecipeList().add(id, recipe);
         }
     }
     
