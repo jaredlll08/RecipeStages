@@ -21,7 +21,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
-public class ShapedRecipeStage implements CraftingRecipe, IShapedRecipe<CraftingContainer> {
+public class ShapedRecipeStage implements CraftingRecipe, IShapedRecipe<CraftingContainer>, IStagedRecipe {
     
     private final ResourceLocation id;
     private final String stage;
@@ -125,7 +125,7 @@ public class ShapedRecipeStage implements CraftingRecipe, IShapedRecipe<Crafting
     @Override
     public RecipeSerializer<?> getSerializer() {
         
-        return RecipeStages.STAGE_SERIALIZER;
+        return RecipeStages.SHAPED_STAGE_SERIALIZER;
     }
     
     @Override
@@ -134,16 +134,17 @@ public class ShapedRecipeStage implements CraftingRecipe, IShapedRecipe<Crafting
         return recipe.getType();
     }
     
+    @Override
     public CraftingRecipe getRecipe() {
         
         return recipe;
     }
     
+    @Override
     public String getStage() {
         
         return stage;
     }
-    
     
     @Override
     public String toString() {

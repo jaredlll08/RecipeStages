@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
-public class RecipeStage implements CraftingRecipe {
+public class RecipeStage implements CraftingRecipe, IStagedRecipe {
     
     private final ResourceLocation id;
     private final String stage;
@@ -139,11 +139,13 @@ public class RecipeStage implements CraftingRecipe {
         return recipe.getType();
     }
     
+    @Override
     public CraftingRecipe getRecipe() {
         
         return recipe;
     }
     
+    @Override
     public String getStage() {
         
         return stage;

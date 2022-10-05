@@ -2,7 +2,9 @@ package com.blamejared.recipestages.compat;
 
 
 import com.blamejared.recipestages.RecipeStagesUtil;
+import com.blamejared.recipestages.recipes.IStagedRecipe;
 import com.blamejared.recipestages.recipes.RecipeStage;
+import com.blamejared.recipestages.recipes.ShapedRecipeStage;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
@@ -32,6 +34,7 @@ public class JEIPlugin implements IModPlugin {
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
         
         registration.getCraftingCategory().addCategoryExtension(RecipeStage.class, StagedRecipeExtension::new);
+        registration.getCraftingCategory().addCategoryExtension(ShapedRecipeStage.class, ShapedStagedRecipeExtension::new);
     }
     
     
@@ -47,9 +50,9 @@ public class JEIPlugin implements IModPlugin {
         Minecraft.getInstance().level.getRecipeManager()
                 .getAllRecipesFor(RecipeType.CRAFTING)
                 .stream()
-                .filter(iCraftingRecipe -> iCraftingRecipe instanceof RecipeStage)
-                .map(iCraftingRecipe -> (RecipeStage) iCraftingRecipe)
-                .collect(() -> new HashMap<Boolean, List<RecipeStage>>(), (hashMap, recipeStage) -> hashMap.computeIfAbsent(data.hasStage(recipeStage.getStage()), i -> new ArrayList<>())
+                .filter(iCraftingRecipe -> iCraftingRecipe instanceof IStagedRecipe)
+                .map(iCraftingRecipe -> (IStagedRecipe) iCraftingRecipe)
+                .collect(() -> new HashMap<Boolean, List<IStagedRecipe>>(), (hashMap, recipeStage) -> hashMap.computeIfAbsent(data.hasStage(recipeStage.getStage()), i -> new ArrayList<>())
                         .add(recipeStage), HashMap::putAll)
                 .forEach((hasStage, recipes) -> {
                     if(hasStage) {

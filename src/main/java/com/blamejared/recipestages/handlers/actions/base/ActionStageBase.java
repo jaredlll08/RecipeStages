@@ -2,6 +2,7 @@ package com.blamejared.recipestages.handlers.actions.base;
 
 import com.blamejared.crafttweaker.api.action.recipe.ActionRecipeBase;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
+import com.blamejared.recipestages.recipes.IStagedRecipe;
 import com.blamejared.recipestages.recipes.RecipeStage;
 import com.blamejared.recipestages.recipes.ShapedRecipeStage;
 import net.minecraft.resources.ResourceLocation;
@@ -27,10 +28,10 @@ public abstract class ActionStageBase extends ActionRecipeBase<CraftingRecipe> {
             String key = entry.getKey().toString();
             CraftingRecipe recipe = entry.getValue();
             boolean shapeless = !(recipe instanceof IShapedRecipe);
-            if(recipe instanceof RecipeStage) {
-                key = ((RecipeStage) entry.getValue()).getRecipe().getId().toString();
-                recipe = ((RecipeStage) recipe).getRecipe();
-                shapeless = !(((RecipeStage) entry.getValue()).getRecipe() instanceof IShapedRecipe);
+            if(recipe instanceof IStagedRecipe stagedRecipe) {
+                key = stagedRecipe.getRecipe().getId().toString();
+                recipe = stagedRecipe.getRecipe();
+                shapeless = !(stagedRecipe.getRecipe() instanceof IShapedRecipe);
             }
             ResourceLocation id = new ResourceLocation("recipestages", key.replaceAll(":", "_"));
             CraftingRecipe recipeStage;

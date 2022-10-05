@@ -2,7 +2,7 @@ package com.blamejared.recipestages.handlers.actions;
 
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
 import com.blamejared.recipestages.handlers.actions.base.ActionClearBase;
-import com.blamejared.recipestages.recipes.RecipeStage;
+import com.blamejared.recipestages.recipes.IStagedRecipe;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -30,8 +30,8 @@ public class ActionClearStageByName extends ActionClearBase {
                 toChange.add(entry);
                 continue;
             }
-            if(entry.getValue() instanceof RecipeStage) {
-                if(name.equals(((RecipeStage) entry.getValue()).getRecipe().getId())) {
+            if(entry.getValue() instanceof IStagedRecipe stagedRecipe) {
+                if(name.equals(stagedRecipe.getRecipe().getId())) {
                     toChange.add(entry);
                 }
             }
