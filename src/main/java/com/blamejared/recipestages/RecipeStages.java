@@ -4,12 +4,14 @@ import com.blamejared.crafttweaker.api.CraftTweakerConstants;
 import com.blamejared.crafttweaker.api.logger.CraftTweakerLogger;
 import com.blamejared.recipestages.recipes.RecipeStageSerializer;
 import com.blamejared.recipestages.recipes.ShapedRecipeStageSerializer;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegisterEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,15 +38,15 @@ public class RecipeStages {
         if(ModList.get().isLoaded(CraftTweakerConstants.MOD_ID)) {
             CONTAINER_LOGGER = LogManager.getLogger(CraftTweakerLogger.LOGGER_NAME);
         }
-    
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(RecipeSerializer.class, this::registerSerializers);
+        
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerSerializers);
     }
     
     @SubscribeEvent
-    public void registerSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
+    public void registerSerializers(RegisterEvent event) {
         
-        event.getRegistry().register(STAGE_SERIALIZER);
-        event.getRegistry().register(SHAPED_STAGE_SERIALIZER);
+        event.register(Registry.RECIPE_SERIALIZER_REGISTRY, new ResourceLocation("recipestages", "stage"), () -> STAGE_SERIALIZER);
+        event.register(Registry.RECIPE_SERIALIZER_REGISTRY, new ResourceLocation("recipestages", "shaped_stage"), () -> SHAPED_STAGE_SERIALIZER);
     }
     
 }

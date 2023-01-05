@@ -47,6 +47,9 @@ public class JEIPlugin implements IModPlugin {
     
     public static void sync(IStageData data) {
         
+        if(Minecraft.getInstance().level == null) {
+            return;
+        }
         Minecraft.getInstance().level.getRecipeManager()
                 .getAllRecipesFor(RecipeType.CRAFTING)
                 .stream()

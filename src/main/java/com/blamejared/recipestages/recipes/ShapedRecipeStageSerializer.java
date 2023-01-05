@@ -3,6 +3,7 @@ package com.blamejared.recipestages.recipes;
 import com.blamejared.recipestages.RecipeStagesUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -12,15 +13,13 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
-public class ShapedRecipeStageSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<ShapedRecipeStage> {
+public class ShapedRecipeStageSerializer implements RecipeSerializer<ShapedRecipeStage> {
     
     public ShapedRecipeStageSerializer() {
         
-        this.setRegistryName("recipestages", "shaped_stage");
     }
     
     @Override
@@ -56,11 +55,13 @@ public class ShapedRecipeStageSerializer extends ForgeRegistryEntry<RecipeSerial
         if(recipe1.getId() == null) {
             throw new IllegalArgumentException("Unable to serialize a recipe without an id: " + recipe1);
         }
-        if(recipe1.getSerializer().getRegistryName() == null) {
+        ResourceLocation serializerKey = Registry.RECIPE_SERIALIZER.getKey(recipe1.getSerializer());
+        if(serializerKey == null) {
+            
             throw new IllegalArgumentException("Unable to serialize a recipe serializer without an id: " + recipe1.getSerializer());
         }
         buffer.writeResourceLocation(recipe1.getId());
-        buffer.writeResourceLocation(recipe1.getSerializer().getRegistryName());
+        buffer.writeResourceLocation(serializerKey);
         recipe1.getSerializer().toNetwork(buffer, RecipeStagesUtil.cast(recipe1));
         buffer.writeUtf(recipe.getStage());
     }

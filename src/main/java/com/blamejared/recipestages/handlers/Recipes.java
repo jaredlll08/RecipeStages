@@ -6,8 +6,8 @@ import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.ingredient.IIngredient;
 import com.blamejared.crafttweaker.api.item.IItemStack;
 import com.blamejared.crafttweaker.api.recipe.MirrorAxis;
-import com.blamejared.crafttweaker.api.recipe.function.RecipeFunctionArray;
-import com.blamejared.crafttweaker.api.recipe.function.RecipeFunctionMatrix;
+import com.blamejared.crafttweaker.api.recipe.fun.RecipeFunction1D;
+import com.blamejared.crafttweaker.api.recipe.fun.RecipeFunction2D;
 import com.blamejared.crafttweaker.api.recipe.manager.CraftingTableRecipeManager;
 import com.blamejared.crafttweaker.api.recipe.type.CTShapedRecipe;
 import com.blamejared.crafttweaker.api.recipe.type.CTShapelessRecipe;
@@ -47,7 +47,7 @@ public class Recipes {
     }
     
     @ZenCodeType.Method
-    public static void addShaped(String stage, String recipeName, IItemStack output, IIngredient[][] ingredients, @ZenCodeType.Optional RecipeFunctionMatrix recipeFunction) {
+    public static void addShaped(String stage, String recipeName, IItemStack output, IIngredient[][] ingredients, @ZenCodeType.Optional RecipeFunction2D recipeFunction) {
         
         recipeName = CraftingTableRecipeManager.INSTANCE.fixRecipeName(recipeName);
         
@@ -58,7 +58,7 @@ public class Recipes {
     }
     
     @ZenCodeType.Method
-    public static void addShapedMirrored(String stage, String recipeName, MirrorAxis mirrorAxis, IItemStack output, IIngredient[][] ingredients, @ZenCodeType.Optional RecipeFunctionMatrix recipeFunction) {
+    public static void addShapedMirrored(String stage, String recipeName, MirrorAxis mirrorAxis, IItemStack output, IIngredient[][] ingredients, @ZenCodeType.Optional RecipeFunction2D recipeFunction) {
         
         recipeName = CraftingTableRecipeManager.INSTANCE.fixRecipeName(recipeName);
         CTShapedRecipe innerRecipe = new CTShapedRecipe(recipeName, output, ingredients, mirrorAxis, recipeFunction);
@@ -67,7 +67,7 @@ public class Recipes {
     }
     
     @ZenCodeType.Method
-    public static void addShapeless(String stage, String recipeName, IItemStack output, IIngredient[] ingredients, @ZenCodeType.Optional RecipeFunctionArray recipeFunction) {
+    public static void addShapeless(String stage, String recipeName, IItemStack output, IIngredient[] ingredients, @ZenCodeType.Optional RecipeFunction1D recipeFunction) {
         
         recipeName = CraftingTableRecipeManager.INSTANCE.fixRecipeName(recipeName);
         

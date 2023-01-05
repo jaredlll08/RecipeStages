@@ -4,6 +4,7 @@ import com.blamejared.recipestages.compat.JEIPlugin;
 import net.darkhax.gamestages.data.GameStageSaveHandler;
 import net.darkhax.gamestages.data.IStageData;
 import net.darkhax.gamestages.event.StagesSyncedEvent;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -16,17 +17,23 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onGamestageSync(StagesSyncedEvent event) {
         
-        JEIPlugin.sync(event.getData());
+        Minecraft.getInstance().execute(() -> {
+            JEIPlugin.sync(event.getData());
+        });
+        
     }
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void recipes(RecipesUpdatedEvent event) {
         
-        IStageData data = GameStageSaveHandler.getClientData();
-        if(data == null) {
-            return;
-        }
-        JEIPlugin.sync(data);
+        Minecraft.getInstance().execute(() -> {
+            IStageData data = GameStageSaveHandler.getClientData();
+            if(data == null) {
+                return;
+            }
+            JEIPlugin.sync(data);
+        });
+        
     }
     
     

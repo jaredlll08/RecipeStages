@@ -26,7 +26,7 @@ archivesBaseName = "RecipeStages"
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'official', version: '1.19.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -65,7 +65,7 @@ minecraft {
 }
 
 modTemplate {
-    mcVersion "1.18.2"
+    mcVersion "1.19.2"
     curseHomepage "https://www.curseforge.com/minecraft/mc-mods/recipe-stages"
     displayName "RecipeStages"
     modLoader "Forge"
@@ -98,13 +98,16 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.14'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.2.3'
 //
-    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:9.1.123")
+    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:10.0.24")
 //
-    implementation fg.deobf("net.darkhax.gamestages:GameStages-Forge-1.18.2:8.0.2")
-    implementation fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-1.18.2:13.0.13")
-    implementation fg.deobf("mezz.jei:jei-1.18.2:9.7.0.194")
+    implementation fg.deobf("net.darkhax.gamestages:GameStages-Forge-1.19.2:11.0.2")
+    implementation fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-1.19.2:16.2.16")
+
+    compileOnly(fg.deobf("mezz.jei:jei-1.19.2-common-api:11.3.0.262"))
+    compileOnly(fg.deobf("mezz.jei:jei-1.19.2-forge-api:11.3.0.262"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-1.19.2-forge:11.3.0.262"))
 }
 
 jar {
@@ -202,7 +205,7 @@ curseforge {
         releaseType = 'release'
         changelog = file("changelog.md")
         changelogType = 'markdown'
-        addGameVersion '1.18.2'
+        addGameVersion '1.19.2'
 
         mainArtifact(jar) {
             relations {
