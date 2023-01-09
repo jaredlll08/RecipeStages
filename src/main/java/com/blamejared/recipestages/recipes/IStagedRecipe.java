@@ -14,8 +14,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
 
-import java.util.UUID;
-
 public interface IStagedRecipe extends CraftingRecipe {
     
     String getStage();
@@ -28,9 +26,14 @@ public interface IStagedRecipe extends CraftingRecipe {
     default ItemStack assemble(CraftingContainer inv) {
         
         if(isGoodForCrafting(inv)) {
-            return getRecipe().assemble(inv);
+            return forceAssemble(inv);
         }
         return ItemStack.EMPTY;
+    }
+    
+    default ItemStack forceAssemble(CraftingContainer inv) {
+        
+        return getRecipe().assemble(inv);
     }
     
     @Override

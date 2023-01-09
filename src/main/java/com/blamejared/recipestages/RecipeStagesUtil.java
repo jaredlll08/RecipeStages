@@ -1,5 +1,10 @@
 package com.blamejared.recipestages;
 
+import com.blamejared.recipestages.recipes.IStagedRecipe;
+import net.darkhax.gamestages.GameStageHelper;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 
 import javax.annotation.Nullable;
@@ -12,6 +17,14 @@ public class RecipeStagesUtil {
     public static <T> T cast(Object o) {
         
         return (T) o;
+    }
+    
+    public static boolean hasStageForRecipe(Recipe<CraftingContainer> recipe, Player player) {
+        
+        if(recipe instanceof IStagedRecipe stagedRecipe) {
+            return GameStageHelper.hasStage(player, stagedRecipe.getStage());
+        }
+        return true;
     }
     
     @Nullable
