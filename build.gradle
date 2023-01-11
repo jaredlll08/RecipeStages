@@ -19,7 +19,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = com.blamejared.modtemplate.Utils.updatingVersion('3.0.0')
+version = com.blamejared.modtemplate.Utils.updatingVersion('4.0.0')
 group = "com.blamejared.recipestages"
 archivesBaseName = "RecipeStages"
 
