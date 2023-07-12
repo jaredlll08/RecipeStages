@@ -12,6 +12,7 @@ import com.blamejared.crafttweaker.api.recipe.manager.CraftingTableRecipeManager
 import com.blamejared.crafttweaker.api.recipe.type.CTShapedRecipe;
 import com.blamejared.crafttweaker.api.recipe.type.CTShapelessRecipe;
 import com.blamejared.recipestages.handlers.actions.*;
+import com.blamejared.recipestages.handlers.actions.base.ActionSetStage;
 import com.blamejared.recipestages.recipes.RecipeStage;
 import com.blamejared.recipestages.recipes.ShapedRecipeStage;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +30,6 @@ public class Recipes {
     
     @ZenCodeType.Method
     public static void setPrintContainers(boolean printContainers) {
-        
         
         CraftTweakerAPI.apply(new ActionSetPrintContainers(printContainers));
     }
@@ -76,7 +76,6 @@ public class Recipes {
         CraftTweakerAPI.apply(new ActionAddRecipe<>(CraftingTableRecipeManager.INSTANCE, recipe, "shapeless"));
     }
     
-    
     @ZenCodeType.Method
     public static void setRecipeStage(String stage, IIngredient output) {
         
@@ -87,6 +86,14 @@ public class Recipes {
     public static void setRecipeStage(String stage, ResourceLocation name) {
         
         CraftTweakerAPI.apply(new ActionSetStageByName(CraftingTableRecipeManager.INSTANCE, stage, name));
+    }
+    
+    @ZenCodeType.Method
+    public static void setRecipeStageByInput(String stage, IItemStack input) {
+        
+        CraftTweakerAPI.apply(new ActionSetStage(CraftingTableRecipeManager.INSTANCE, stage, craftingRecipe -> craftingRecipe.getIngredients()
+                .stream()
+                .anyMatch(ingredient -> ingredient.test(input.getInternal()))));
     }
     
     @ZenCodeType.Method
