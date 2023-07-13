@@ -233,7 +233,7 @@ modrinth {
     token = System.getenv("modrinth_token")
     projectId = "qXkLFB0L"
     changelog.set(file("changelog.md").text)
-    versionName.set("Forge-1.19.3-$version")
+    versionName.set("Forge-1.19.2-$version")
     versionType = "release"
     uploadFile = jar
     dependencies {
