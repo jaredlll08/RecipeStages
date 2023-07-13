@@ -5,6 +5,9 @@ pipeline {
     tools {
         jdk "jdk-17.0.1"
     }
+    environment {
+        modrinth_token = credentials('modrinth_token')
+    }
     stages {
         stage('Clean') {
             steps {
@@ -41,7 +44,7 @@ pipeline {
                     sh './gradlew publish'
 
                     echo 'Deploying to CurseForge'
-                    sh './gradlew curseforge'
+                    sh './gradlew modrinth curseforge'
                 }
             }
         }
@@ -49,7 +52,6 @@ pipeline {
     post {
         always {
             archive 'build/libs/**.jar'
-            archive 'changelog.md'
         }
     }
 }

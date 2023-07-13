@@ -10,14 +10,16 @@ buildscript {
         classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.4.0"
         classpath group: 'com.blamejared', name: 'ModTemplate', version: '2.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7.+'
-
+        classpath "com.modrinth.minotaur:Minotaur:2.+"
     }
 }
+
 apply plugin: 'com.blamejared.modtemplate'
 apply plugin: "com.matthewprenger.cursegradle"
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.modrinth.minotaur'
 
 version = com.blamejared.modtemplate.Utils.updatingVersion('4.0.0')
 group = "com.blamejared.recipestages"
@@ -225,4 +227,17 @@ tasks.withType(JavaCompile).configureEach {
 tasks.withType(GenerateModuleMetadata) {
 
     enabled = false
+}
+
+modrinth {
+    token = System.getenv("modrinth_token")
+    projectId = "qXkLFB0L"
+    changelog.set(file("changelog.md").text)
+    versionName.set("Forge-1.19.3-$version")
+    versionType = "release"
+    uploadFile = jar
+    dependencies {
+        required.project "game-stages"
+        optional.project "crafttweaker"
+    }
 }
