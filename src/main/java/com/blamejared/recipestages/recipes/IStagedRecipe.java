@@ -5,9 +5,11 @@ import com.blamejared.recipestages.RecipeStages;
 import com.blamejared.recipestages.RecipeStagesUtil;
 import com.blamejared.recipestages.ServerStuff;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -23,17 +25,17 @@ public interface IStagedRecipe extends CraftingRecipe {
     CraftingRecipe getRecipe();
     
     @Override
-    default ItemStack assemble(CraftingContainer inv) {
+    default ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
         
         if(isGoodForCrafting(inv)) {
-            return forceAssemble(inv);
+            return forceAssemble(inv, registryAccess);
         }
         return ItemStack.EMPTY;
     }
     
-    default ItemStack forceAssemble(CraftingContainer inv) {
+    default ItemStack forceAssemble(CraftingContainer inv, RegistryAccess registryAccess) {
         
-        return getRecipe().assemble(inv);
+        return getRecipe().assemble(inv, registryAccess);
     }
     
     @Override
@@ -67,9 +69,9 @@ public interface IStagedRecipe extends CraftingRecipe {
     }
     
     @Override
-    default ItemStack getResultItem() {
+    default ItemStack getResultItem(RegistryAccess registryAccess) {
         
-        return getRecipe().getResultItem();
+        return getRecipe().getResultItem(registryAccess);
     }
     
     default boolean isGoodForCrafting(CraftingContainer inv) {
@@ -94,6 +96,11 @@ public interface IStagedRecipe extends CraftingRecipe {
     default RecipeType<?> getType() {
         
         return getRecipe().getType();
+    }
+    
+    @Override
+    default CraftingBookCategory category() {
+        return getRecipe().category();
     }
     
 }

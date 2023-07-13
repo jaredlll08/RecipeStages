@@ -45,4 +45,10 @@ public class ActionSetPackageStages implements IUndoableAction {
         return "Set the stages of package: \"" + packageName + "\" to: " + Arrays.toString(stages);
     }
     
+    @Override
+    public String systemName() {
+        
+        return "RecipeStages";
+    }
+    
 }

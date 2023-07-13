@@ -6,7 +6,7 @@ modId = "recipestages"
 version = "${file.jarVersion}"
 displayName = "Recipe Stages"
 authors = "Jaredlll08"
-updateJSONURL = "https://updates.blamejared.com/get?n=recipestages&gv=1.19.2"
+updateJSONURL = "https://updates.blamejared.com/get?n=recipestages&gv=1.19.4"
 description = '''
 Allows recipes to be staged using GameStages and CraftTweaker
 '''

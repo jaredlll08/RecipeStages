@@ -9,6 +9,7 @@ import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
+import mezz.jei.library.util.RecipeUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.ItemStack;
@@ -32,13 +33,13 @@ public class StagedRecipeExtension implements ICraftingCategoryExtension {
         
         IIngredientType<ItemStack> item = VanillaTypes.ITEM_STACK;
         
-        craftingGridHelper.setOutputs(builder, item, List.of(recipe.getResultItem()));
+        craftingGridHelper.createAndSetOutputs(builder, item, List.of(RecipeUtil.getResultItem(recipe)));
         int width = recipe.getWidth();
         int height = recipe.getHeight();
         if(recipe.isShapeless()) {
             builder.setShapeless();
         }
-        craftingGridHelper.setInputs(builder, item, recipe.getIngredients()
+        craftingGridHelper.createAndSetInputs(builder, item, recipe.getIngredients()
                 .stream()
                 .map(Ingredient::getItems)
                 .map(Arrays::asList)

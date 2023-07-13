@@ -3,7 +3,7 @@ package com.blamejared.recipestages.recipes;
 import com.blamejared.recipestages.RecipeStagesUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -55,7 +55,7 @@ public class ShapedRecipeStageSerializer implements RecipeSerializer<ShapedRecip
         if(recipe1.getId() == null) {
             throw new IllegalArgumentException("Unable to serialize a recipe without an id: " + recipe1);
         }
-        ResourceLocation serializerKey = Registry.RECIPE_SERIALIZER.getKey(recipe1.getSerializer());
+        ResourceLocation serializerKey = BuiltInRegistries.RECIPE_SERIALIZER.getKey(recipe1.getSerializer());
         if(serializerKey == null) {
             
             throw new IllegalArgumentException("Unable to serialize a recipe serializer without an id: " + recipe1.getSerializer());

@@ -45,4 +45,10 @@ public class ActionSetContainerStages implements IUndoableAction {
         return "Set the stages of container: \"" + containerName + "\" to: " + Arrays.toString(stages);
     }
     
+    @Override
+    public String systemName() {
+        
+        return "RecipeStages";
+    }
+    
 }

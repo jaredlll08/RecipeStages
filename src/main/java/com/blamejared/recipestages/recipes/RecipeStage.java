@@ -3,10 +3,8 @@ package com.blamejared.recipestages.recipes;
 import com.blamejared.recipestages.RecipeStages;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
 public class RecipeStage implements IStagedRecipe {

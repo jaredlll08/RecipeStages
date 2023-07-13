@@ -3,7 +3,7 @@ package com.blamejared.recipestages.handlers.actions;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
 import com.blamejared.recipestages.handlers.actions.base.ActionClearBase;
 import com.blamejared.recipestages.recipes.IStagedRecipe;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +46,7 @@ public class ActionClearStageByName extends ActionClearBase {
     @Override
     public String describe() {
         
-        return "Clearing the stage of  \"" + Registry.RECIPE_TYPE.getKey(this.getManager()
+        return "Clearing the stage of  \"" + BuiltInRegistries.RECIPE_TYPE.getKey(this.getManager()
                 .getRecipeType()) + "\" recipes with name: " + this.name + "\"";
     }
     
@@ -57,7 +57,7 @@ public class ActionClearStageByName extends ActionClearBase {
                 .getRecipes()
                 .containsKey(new ResourceLocation("recipestages", this.name.toString().replaceAll(":", "_")));
         if(!containsKey) {
-            logger.warn("No recipe with type: \"" + Registry.RECIPE_TYPE.getKey(this.getManager()
+            logger.warn("No recipe with type: \"" + BuiltInRegistries.RECIPE_TYPE.getKey(this.getManager()
                     .getRecipeType()) + "\" and name: \"" + this.name + "\"");
         }
         

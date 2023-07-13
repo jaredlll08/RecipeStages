@@ -1,6 +1,6 @@
 package com.blamejared.recipestages.handlers.actions.base;
 
-import com.blamejared.crafttweaker.api.action.recipe.ActionRecipeBase;
+import com.blamejared.crafttweaker.api.action.base.IRuntimeAction;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
 import com.blamejared.recipestages.recipes.IStagedRecipe;
 import com.blamejared.recipestages.recipes.RecipeStage;
@@ -12,13 +12,14 @@ import net.minecraftforge.common.crafting.IShapedRecipe;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ActionStageBase extends ActionRecipeBase<CraftingRecipe> {
+public abstract class ActionStageBase implements IRuntimeAction {
     
     protected final String stage;
+    private final IRecipeManager<CraftingRecipe> manager;
     
     public ActionStageBase(IRecipeManager<CraftingRecipe> manager, String stage) {
         
-        super(manager);
+        this.manager = manager;
         this.stage = stage;
     }
     
@@ -43,6 +44,17 @@ public abstract class ActionStageBase extends ActionRecipeBase<CraftingRecipe> {
             this.getManager().getRecipeList().add(id, recipeStage);
             
         }
+    }
+    
+    public IRecipeManager<CraftingRecipe> getManager() {
+        
+        return manager;
+    }
+    
+    @Override
+    public String systemName() {
+        
+        return "RecipeStages";
     }
     
 }

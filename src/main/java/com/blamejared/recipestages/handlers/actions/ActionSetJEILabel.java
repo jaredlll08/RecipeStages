@@ -3,6 +3,7 @@ package com.blamejared.recipestages.handlers.actions;
 import com.blamejared.crafttweaker.api.action.base.IUndoableAction;
 import com.blamejared.crafttweaker.api.zencode.IScriptLoadSource;
 import com.blamejared.recipestages.RecipeStages;
+import org.apache.logging.log4j.Logger;
 
 public class ActionSetJEILabel implements IUndoableAction {
     
@@ -38,7 +39,13 @@ public class ActionSetJEILabel implements IUndoableAction {
     }
     
     @Override
-    public boolean shouldApplyOn(IScriptLoadSource source) {
+    public String systemName() {
+        
+        return "RecipeStages";
+    }
+    
+    @Override
+    public boolean shouldApplyOn(IScriptLoadSource source, Logger logger) {
         
         return true;
     }

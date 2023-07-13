@@ -3,8 +3,9 @@ package com.blamejared.recipestages.handlers.actions;
 import com.blamejared.crafttweaker.api.ingredient.IIngredient;
 import com.blamejared.crafttweaker.api.item.MCItemStackMutable;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
+import com.blamejared.crafttweaker.impl.helper.AccessibleElementsProvider;
 import com.blamejared.recipestages.handlers.actions.base.ActionClearBase;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -29,7 +30,7 @@ public class ActionClearStageByOutput extends ActionClearBase {
         
         List<Map.Entry<ResourceLocation, CraftingRecipe>> toChange = new ArrayList<>();
         for(Map.Entry<ResourceLocation, CraftingRecipe> entry : this.getManager().getRecipes().entrySet()) {
-            ItemStack stack = entry.getValue().getResultItem();
+            ItemStack stack = AccessibleElementsProvider.get().registryAccess(registryAccess -> entry.getValue().getResultItem(registryAccess));
             if(this.output.matches(new MCItemStackMutable(stack))) {
                 toChange.add(entry);
             }
@@ -42,7 +43,7 @@ public class ActionClearStageByOutput extends ActionClearBase {
     @Override
     public String describe() {
         
-        return "Clearing the stage of  \"" + Registry.RECIPE_TYPE.getKey(this.getManager()
+        return "Clearing the stage of  \"" + BuiltInRegistries.RECIPE_TYPE.getKey(this.getManager()
                 .getRecipeType()) + "\" recipes with output: " + this.output + "\"";
     }
     
