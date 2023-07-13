@@ -8,6 +8,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -79,17 +80,21 @@ public interface IStagedRecipe extends CraftingRecipe {
         // We do this check in ServerStuff later down the line,
         // which leads to a de-sync issue with the item showing on the client.
         //noinspection ConstantValue
-        if(inv.menu == null && ForgeHooks.getCraftingPlayer() == null) {
-            return false;
+        if(inv instanceof TransientCraftingContainer transientInv) {
+            
+            if(transientInv.menu == null && ForgeHooks.getCraftingPlayer() == null) {
+                return false;
+            }
+            if(RecipeStages.printContainer) {
+                RecipeStages.CONTAINER_LOGGER.info("Tried to craft a recipe in container: '{}'", transientInv.menu.getClass()
+                        .getName());
+            }
+            
+            return Boolean.TRUE.equals(RecipeStagesUtil.callForSide(
+                    () -> () -> ClientStuff.handleClient(transientInv, getStage()),
+                    () -> () -> ServerStuff.handleServer(transientInv, getStage())));
         }
-        if(RecipeStages.printContainer) {
-            RecipeStages.CONTAINER_LOGGER.info("Tried to craft a recipe in container: '{}'", inv.menu.getClass()
-                    .getName());
-        }
-        
-        return Boolean.TRUE.equals(RecipeStagesUtil.callForSide(
-                () -> () -> ClientStuff.handleClient(inv, getStage()),
-                () -> () -> ServerStuff.handleServer(inv, getStage())));
+        throw new UnsupportedOperationException("Tried to craft a staged recipe in a non TransientCraftingContainer('%s'). Please report this to RecipeStages!".formatted(inv.getClass()));
     }
     
     @Override
@@ -100,6 +105,7 @@ public interface IStagedRecipe extends CraftingRecipe {
     
     @Override
     default CraftingBookCategory category() {
+        
         return getRecipe().category();
     }
     

@@ -5,7 +5,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class ServerStuff {
     
-    public static boolean handleServer(CraftingContainer inv, String stage) {
+    public static boolean handleServer(TransientCraftingContainer inv, String stage) {
         
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if(server != null) {
