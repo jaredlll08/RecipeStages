@@ -232,7 +232,7 @@ tasks.withType(GenerateModuleMetadata) {
 modrinth {
     token = System.getenv("modrinth_token")
     projectId = "qXkLFB0L"
-    changelog.set(file("changelog.md").text)
+    changelog = file("changelog.md").exists() ? file("changelog.md").text : "Not provided"
     versionName.set("Forge-1.20-$version")
     versionType = "release"
     uploadFile = jar
