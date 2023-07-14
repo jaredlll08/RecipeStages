@@ -3,13 +3,15 @@ package com.blamejared.recipestages;
 import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.common.ForgeHooks;
+
+import java.util.Optional;
 
 public class ClientStuff {
     
-    public static boolean handleClient(CraftingContainer inv, String stage) {
-        
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static boolean handleClient(Optional<AbstractContainerMenu> menu, String stage) {
         
         Player player = Minecraft.getInstance().player != null ? Minecraft.getInstance().player : ForgeHooks.getCraftingPlayer();
         if(player == null) {

@@ -7,6 +7,7 @@ import com.blamejared.recipestages.ServerStuff;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -16,6 +17,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
+
+import java.util.Optional;
 
 public interface IStagedRecipe extends CraftingRecipe {
     
@@ -80,21 +83,19 @@ public interface IStagedRecipe extends CraftingRecipe {
         // We do this check in ServerStuff later down the line,
         // which leads to a de-sync issue with the item showing on the client.
         //noinspection ConstantValue
-        if(inv instanceof TransientCraftingContainer transientInv) {
-            
-            if(transientInv.menu == null && ForgeHooks.getCraftingPlayer() == null) {
-                return false;
-            }
-            if(RecipeStages.printContainer) {
-                RecipeStages.CONTAINER_LOGGER.info("Tried to craft a recipe in container: '{}'", transientInv.menu.getClass()
-                        .getName());
-            }
-            
-            return Boolean.TRUE.equals(RecipeStagesUtil.callForSide(
-                    () -> () -> ClientStuff.handleClient(transientInv, getStage()),
-                    () -> () -> ServerStuff.handleServer(transientInv, getStage())));
+        
+        final Optional<AbstractContainerMenu> menu = Optional.ofNullable(inv instanceof TransientCraftingContainer transientInv ? transientInv.menu : null);
+        
+        if(menu.isEmpty() && ForgeHooks.getCraftingPlayer() == null) {
+            return false;
         }
-        throw new UnsupportedOperationException("Tried to craft a staged recipe in a non TransientCraftingContainer('%s'). Please report this to RecipeStages!".formatted(inv.getClass()));
+        menu.ifPresentOrElse(men -> RecipeStages.CONTAINER_LOGGER.info("Tried to craft a recipe in container: '{}'", men.getClass()
+                .getName()), () -> RecipeStages.CONTAINER_LOGGER.info("Tried to craft a recipe in an unknown menu from inventory: '{}'", inv.getClass()
+                .getName()));
+        
+        return Boolean.TRUE.equals(RecipeStagesUtil.callForSide(
+                () -> () -> ClientStuff.handleClient(menu, getStage()),
+                () -> () -> ServerStuff.handleServer(menu, getStage())));
     }
     
     @Override
