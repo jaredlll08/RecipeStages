@@ -9,6 +9,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = "recipestages", value = Dist.CLIENT)
@@ -16,23 +17,25 @@ public class ClientEventHandler {
     
     @SubscribeEvent
     public static void onGamestageSync(StagesSyncedEvent event) {
-        
-        Minecraft.getInstance().execute(() -> {
-            JEIPlugin.sync(event.getData());
-        });
+        if(ModList.get().isLoaded("jei")) {
+            Minecraft.getInstance().execute(() -> {
+                JEIPlugin.sync(event.getData());
+            });
+        }
         
     }
     
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void recipes(RecipesUpdatedEvent event) {
-        
-        Minecraft.getInstance().execute(() -> {
-            IStageData data = GameStageSaveHandler.getClientData();
-            if(data == null) {
-                return;
-            }
-            JEIPlugin.sync(data);
-        });
+        if(ModList.get().isLoaded("jei")) {
+            Minecraft.getInstance().execute(() -> {
+                IStageData data = GameStageSaveHandler.getClientData();
+                if(data == null) {
+                    return;
+                }
+                JEIPlugin.sync(data);
+            });
+        }
         
     }
     
